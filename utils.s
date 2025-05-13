@@ -1,4 +1,5 @@
 *= $1000
+;y holds low byte, a holds high
 reg_set:
     inx
     pha
@@ -40,17 +41,14 @@ ptr_double_inc:
     jsr ptr_inc
     jmp ptr_inc
 transfer_ptr_to_reg:
-    ldy #$0
+    ldy #$1
     lda ($7E),y
     pha
-    iny
+    dey
     lda ($7E),y
     tay
     pla
-    jsr reg_set
-    rts
-skip_ptr_inc_h:
-    rts
+    jmp reg_set
 add_sixteen:
 ;add r1 to r0
     lda $02

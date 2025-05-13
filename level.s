@@ -12,7 +12,7 @@ set_level_base:
     lsr
     clc
     adc #$1
-    sta $1
+    sta $0
     rts
 return_to_level_base:
     lda #$0
@@ -57,6 +57,6 @@ pf_rect_loader:
     sec
     jsr GRAPH_draw_rect
     dec $60
-    beq playfield_draw_loop
+    bne playfield_draw_loop
 end_playfield_draw_loop:
     rts
