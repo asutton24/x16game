@@ -1,4 +1,24 @@
+ram_init:
+    jsr free_all_sprites
+    lda #$3F
+entity_ram_init:
+    pha
+    jsr entity_clear
+    pla
+    sec
+    sbc #$1
+    bpl entity_ram_init
+    lda #$7F
+sprite_attribute_init:
+    pha
+    jsr initialize_sprite
+    pla
+    sec
+    sbc #$1
+    bpl sprite_attribute_init
+    rts
 start:
+    jsr ram_init
     lda #$80
     jsr screen_mode
     lda #$0

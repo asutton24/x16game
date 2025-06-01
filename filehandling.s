@@ -9,7 +9,7 @@ load_level_into_ram:
     bcc valid_low_nibble
     adc #$6
 valid_low_nibble:
-    sta $903
+    sta $904
     txa
     lsr
     lsr
@@ -21,6 +21,7 @@ valid_low_nibble:
     bcc valid_high_nibble
     adc #$6
 valid_high_nibble:
+    sta $903
     lda #$1
     ldx #$8
     ldy #$2
@@ -47,3 +48,50 @@ valid_high_nibble:
     txa
     jsr LOAD
     rts
+load_sprite_sheet:
+; A holds which sheet to load SPRX.BIN, x holds offset
+    and #$F
+    tay
+    txa
+    pha
+    tya
+    clc
+    adc #$30
+    cmp #$3A
+    bcc valid_sprite_nibble
+    adc #$6
+valid_sprite_nibble:
+    sta $90C
+    lda #$1
+    ldx #$8
+    ldy #$2
+    jsr SETLFS
+    lda #$8
+    ldx #$9
+    ldy #$9
+    jsr SETNAM
+    pla
+    tay
+    lda #$0
+    tax
+    jsr reg_set
+    ldy #$80
+    ldx #$1
+    jsr reg_set
+    jsr mult_sixteen
+    lda #$30
+    ldy #$0
+    ldx #$1
+    jsr reg_set
+    jsr add_sixteen
+    ldx #$0
+    jsr reg_get
+    pha
+    tya
+    tax
+    pla
+    tay
+    lda #$3
+    jsr LOAD
+    rts
+

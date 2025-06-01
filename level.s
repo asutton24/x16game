@@ -34,13 +34,16 @@ draw_playfield:
     sta $7F
     ldy #$0
     lda ($7E),y
-    beq end_playfield_draw_loop
     sta $60
-    jsr ptr_inc
+    iny
+    lda ($7E),y
+    sta $62
+    jsr ptr_double_inc
 playfield_draw_loop:
-    ldy #$0
+    dey
     lda ($7E),y
     tax
+    ldy $62
     jsr GRAPH_set_colors
     jsr ptr_inc
     ldx #$0
