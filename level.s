@@ -40,7 +40,7 @@ draw_playfield:
     sta $62
     jsr ptr_double_inc
 playfield_draw_loop:
-    dey
+    ldy #$0
     lda ($7E),y
     tax
     ldy $62

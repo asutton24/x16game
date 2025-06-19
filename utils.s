@@ -48,6 +48,45 @@ reg_mov:
     pla
     sta $00,x
     rts
+reg_push:
+    jsr reg_get
+direct_push:
+    ldx $3F
+    sta $40,x
+    dex
+    sty $40,x
+    dex
+    stx $3F
+    rts
+reg_pop:
+    txa
+    ldx $3F
+    sta $3F
+    ldy $40,x
+    inx
+    lda $40,x
+    inx
+    pha
+    txa
+    ldx $3F
+    sta $3F
+    pla
+    jmp reg_set
+reg_negate:
+    inx
+    txa
+    asl
+    tax
+    clc
+    lda $0,x
+    eor #$FF
+    adc #$1
+    sta $0,x
+    lda $1,x
+    eor #$FF
+    adc #$0
+    sta $1,x
+    rts
 ptr_set:
     sta $7F
     sty $7E
@@ -80,7 +119,7 @@ skip_ptr_inc_h:
 ptr_double_inc:
     jsr ptr_inc
     jmp ptr_inc
-transfer_ptr_to_reg:
+fetch_ptr:
     ldy #$1
     lda ($7E),y
     pha
@@ -88,7 +127,13 @@ transfer_ptr_to_reg:
     lda ($7E),y
     tay
     pla
+    rts
+transfer_ptr_to_reg:
+    jsr fetch_ptr
     jmp reg_set
+transfer_ptr_to_stk:
+    jsr fetch_ptr
+    jmp direct_push
 transfer_reg_to_ptr:
     jsr reg_get
     jmp ptr_set_at
@@ -110,6 +155,7 @@ add_to_vera:
     clc
     adc $9F20
     sta $9F20
+    lda #$0
     adc $9F21
     sta $9F21
     clc
@@ -122,6 +168,22 @@ add_sixteen:
     lda $03
     adc $05
     sta $03
+    rts
+stk_add:
+;add the top 2 values on the stack
+    ldx $3F
+    clc
+    lda $40,x
+    inx
+    inx
+    adc $40,x 
+    dex
+    lda $40,x
+    inx
+    inx
+    adc $40,x
+    dex
+    stx $3F
     rts
 sub_sixteen:
 ;subtract r1 from r0
@@ -157,6 +219,16 @@ no_add_needed:
     dey
     bne mult_sixteen_loop
     rts
+cmp_sixteen:
+;cmp r0 and r1
+    lda $3
+    cmp $5
+    beq upper_byte_equal
+    rts
+upper_byte_equal:
+    lda $2
+    cmp $4
+    rts
 fixed_to_int:
 ;Converts fixed point number in r0 to integer
     clc
@@ -166,5 +238,76 @@ fixed_to_int:
     ror $3
     ror $2
     rts
+flip_carry:
+    bcs turn_off_carry
+    sec
+    rts
+turn_off_carry:
+    clc
+    rts
+rectangle_collide:
+;r1x, r1w, r1y, r1h, r2x, r2w, r2y, r2h
+    lda $3F
+    pha
+    ldx #$6
+    jsr reg_push
+    ldx #$7
+    jsr reg_push
+    jsr stk_add
+    ldx #$4
+    jsr reg_push
+    ldx #$5
+    jsr reg_push
+    jsr stk_add
+    ldx #$2
+    jsr reg_push
+    ldx #$3
+    jsr reg_push
+    jsr stk_add
+    ldx #$0
+    jsr reg_push
+    ldx #$1
+    jsr reg_push
+    jsr stk_add
+    ldx #$0
+    ldy #$8
+    jsr reg_mov
+    ldx #$4
+    ldy #$1
+    jsr reg_mov
+    ldx #$0
+    jsr reg_pop
+    jsr cmp_sixteen
+    bcc restore_stack_and_ret
+    ldx #$6
+    ldy #$1
+    jsr reg_mov
+    ldx #$0
+    jsr reg_pop
+    jsr cmp_sixteen
+    bcc restore_stack_and_ret
+    ldx #$8
+    ldy #$0
+    jsr reg_mov
+    ldx #$1
+    jsr reg_pop
+    jsr cmp_sixteen
+    jsr flip_carry
+    bcc restore_stack_and_ret
+    ldx #$2
+    ldy #$0
+    jsr reg_mov
+    ldx #$1
+    jsr reg_pop
+    jsr cmp_sixteen
+    jsr flip_carry
+    bcc restore_stack_and_ret
+restore_stack_and_ret:
+    pla
+    sta $3F
+    rts
+
+    
+
 
 

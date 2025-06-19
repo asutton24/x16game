@@ -67,7 +67,7 @@ class Editor:
                 playfield.append(0)
                 playfield += int_16(r[2][0] + r[1]) + int_16(r[2][1] + r[1]) + int_16(r[2][2] - 2 * r[1]) + int_16(r[2][3] - 2 * r[1])
             counter += 1
-        playfield = [len(playfield) // 9] + playfield
+        playfield = [len(playfield) // 9] + [0] + playfield
         solid_colliders = [len(solid_colliders) // 8] + solid_colliders
         if playfield == []: playfield = [0]
         if solid_colliders == []: solid_colliders = [0]

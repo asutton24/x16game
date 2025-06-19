@@ -134,16 +134,24 @@ turn_on_sprite:
     rts
 set_sprite_pos:
 ;x in r0, y in r1
+    pha
+    ldx #$0
+    ldy #$3
+    jsr reg_mov
+    ldx #$1
+    ldy #$4
+    jsr reg_mov
+    pla
     jsr align_vera_to_attributes
     lda #$2
     jsr add_to_vera
-    lda $2
+    lda $8
     sta $9F23
-    lda $3
+    lda $9
     sta $9F23
-    lda $4
+    lda $A
     sta $9F23
-    lda $5
+    lda $B
     sta $9F23
     rts
 

@@ -20,3 +20,7 @@ GRAPH_draw_rect:
 screen_mode:
 *= $FFDE
 RDTIM:
+*= $FF53
+joystick_scan:
+*= $FF56
+joystick_get:

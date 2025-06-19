@@ -103,5 +103,70 @@ update_sprite_pos:
     pla
     jsr set_sprite_pos
     rts
+entity_solid_collision:
+;entity in main ptr, solid object in reserve
+    jsr swap_ptrs
+    ldx #$4
+    jsr transfer_ptr_to_reg
+    jsr ptr_double_inc
+    ldx #$6
+    jsr transfer_ptr_to_reg
+    jsr ptr_double_inc
+    ldx #$5
+    jsr transfer_ptr_to_reg
+    jsr ptr_double_inc
+    ldx #$7
+    jsr transfer_ptr_to_reg
+    jsr ptr_double_inc
+    jsr swap_ptrs
+    jsr return_to_entity_base
+    lda #$3
+    jsr ptr_add
+    jsr transfer_ptr_to_stk
+    jsr ptr_double_inc
+    jsr transfer_ptr_to_stk
+    lda #$6
+    jsr ptr_add
+    ldy #$0
+    lda ($7E),y
+    pha
+    and #$F
+    tay
+    lda #$0
+    jsr direct_push
+    jsr stk_add
+    ldx #$2
+    jsr reg_pop
+    pla
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda #$0
+    jsr direct_push
+    jsr stk_add
+    ldx #$0
+    jsr reg_pop
+    jsr ptr_inc
+    ldy #$0
+    lda ($7E),y
+    pha
+    and #$F
+    tay
+    lda #$0
+    ldx #$3
+    jsr reg_set
+    pla
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda #$0
+    ldx #$1
+    jsr reg_set
+    jmp rectangle_collide
+    
 
 
