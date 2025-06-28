@@ -24,3 +24,5 @@ RDTIM:
 joystick_scan:
 *= $FF56
 joystick_get:
+*= $FECF
+entropy_get:

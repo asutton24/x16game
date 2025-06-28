@@ -22,9 +22,9 @@ sprite_attribute_init:
     sta $9F29
     lda #$1F
     sta $3F
+    jsr randinit
     rts
 start:
-    jsr ram_init
     lda #$80
     jsr screen_mode
     lda #$0
@@ -40,26 +40,32 @@ start:
     jsr GRAPH_clear
     lda #$0
     ldx #$0
+    jsr load_level_into_ram
+    lda #$0
+    jsr set_level_base
+    jsr swap_ptrs
+    lda #$0
+    ldx #$0
     jsr load_sprite_sheet
-    lda #$0
-    jsr initialize_sprite
-    lda #$0
+    jsr ram_init
+    lda #$1
     ldx #$0
-    jsr assign_data_to_sprite
+    jsr entity_init
     lda #$0
-    ldy #$FF
-    ldx #$0
+    ldy #$1
+    tax
     jsr reg_set
-    ldy #$80
+    ldx #$1
+    tay
+    jsr reg_set
+    jsr set_entity_vel
+    ldx #$1
+    ldy #$0
+    jsr reg_mov
+    lda #$0
+    ldy #$FC
     ldx #$1
     jsr reg_set
     lda #$0
-    jsr set_sprite_pos
-    lda #$0
-    jsr turn_on_sprite
-    rts
-    lda #$0
-    jsr set_level_base
-    jsr draw_playfield
-    rts
-
+    jsr set_entity_pos
+    jmp frame_loop

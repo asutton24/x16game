@@ -5,3 +5,13 @@ entity format: type (1), sprite assignment (1), current sprite used (1), x pos (
 x vel (2, fixed-point), y vel (2, fixed-point), hitbox (2 bytes, first is offset from top left in two 4-bit numbers,
 second are the width and height of the box), health (high bit signifies invisibility, lower 7 are health points),
 animation timer (1), animation time (1), number of frames (1), frame list (variable), whatever is left is free to use
+
+zpg map:
+$02-$21 r0-rf
+$3B-$3D rand byte info
+$3E frame clock
+$3F 16 bit-stack ptr
+$40-$5F 16-bit stack
+$60-$6F main work ram
+$7C-$7D aux ptr
+$7E-$7F main ptr

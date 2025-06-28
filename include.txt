@@ -1,1 +1,1 @@
-x16system.s dataseg.s utils.s setup.s filehandling.s level.s sprite.s entity.s
+x16system.s dataseg.s utils.s setup.s filehandling.s level.s sprite.s entity.s player.s gameloop.s

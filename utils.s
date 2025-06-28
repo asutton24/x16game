@@ -58,7 +58,7 @@ direct_push:
     dex
     stx $3F
     rts
-reg_pop:
+direct_pop:
     txa
     ldx $3F
     sta $3F
@@ -71,6 +71,9 @@ reg_pop:
     ldx $3F
     sta $3F
     pla
+    rts
+reg_pop:
+    jsr direct_pop
     jmp reg_set
 reg_negate:
     inx
@@ -97,6 +100,17 @@ ptr_add:
     sta $7E
     lda $7F
     adc #$00
+    sta $7F
+    rts
+ptr_sub:
+    tax
+    lda $7E
+    stx $7E
+    sec
+    sbc $7E
+    sta $7E
+    lda $7F
+    sbc #$0
     sta $7F
     rts
 ptr_set_at:
@@ -137,6 +151,9 @@ transfer_ptr_to_stk:
 transfer_reg_to_ptr:
     jsr reg_get
     jmp ptr_set_at
+pop_to_ptr:
+    jsr direct_pop
+    jmp ptr_set_at
 swap_ptrs:
     lda $7E
     pha
@@ -151,6 +168,26 @@ swap_ptrs:
     pla
     sta $7C
     rts
+mult_eight:
+; $60 * $61
+	lda #$0
+	sta $62
+	ldx #$8
+multLoop:
+	lda $61
+	and #$1
+	beq noAdd
+	lda $62
+	clc
+	adc $60
+	sta $62
+noAdd:
+	asl $60
+	lsr $61
+	dex
+	bne multLoop
+    lda $62
+	rts
 add_to_vera:
     clc
     adc $9F20
@@ -247,6 +284,7 @@ turn_off_carry:
     rts
 rectangle_collide:
 ;r1x, r1w, r1y, r1h, r2x, r2w, r2y, r2h
+;Carry is set if there is a collision
     lda $3F
     pha
     ldx #$6
@@ -301,11 +339,43 @@ rectangle_collide:
     jsr reg_pop
     jsr cmp_sixteen
     jsr flip_carry
-    bcc restore_stack_and_ret
 restore_stack_and_ret:
     pla
     sta $3F
     rts
+randinit:
+	jsr entropy_get
+	stx $3C
+	and #$FC
+	bne multiplierNotZero
+	txa
+	and #$FC
+multiplierNotZero:
+	ora #$1
+	sta $3B
+	tya
+	ora #$1
+	sta $3D
+	rts
+randbyte:
+	lda $3B
+	sta $60
+	lda $3C
+	sta $61
+	jsr mult_eight
+	clc
+	adc $3D
+	sta $3C
+	rts
+wait_one_jiffy:
+    jsr RDTIM
+    sta $60
+continue_waiting:
+    jsr RDTIM
+    cmp $60
+    beq continue_waiting
+    rts
+
 
     
 

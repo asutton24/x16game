@@ -94,4 +94,3 @@ valid_sprite_nibble:
     lda #$3
     jsr LOAD
     rts
-

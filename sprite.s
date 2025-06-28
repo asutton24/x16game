@@ -154,8 +154,3 @@ set_sprite_pos:
     lda $B
     sta $9F23
     rts
-
-
-
-
-    
