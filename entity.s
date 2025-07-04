@@ -104,6 +104,29 @@ entity_init:
     tay
     sta ($7E),y
     rts
+apply_gravity:
+    lda $3E
+    and #$F
+    beq valid_gravity_frame
+    rts
+valid_gravity_frame:
+    jsr get_entity_vel
+    ldx #$0
+    jsr reg_push
+    ldx #$1
+    ldy #$0
+    jsr reg_mov
+    lda #$0
+    ldy #$1
+    ldx #$1
+    jsr reg_set
+    jsr add_sixteen
+    ldx #$0
+    ldy #$1
+    jsr reg_mov
+    ldx #$0
+    jsr reg_pop
+    jmp set_entity_vel
 apply_y_velocity:
     lda #$2
     jsr return_to_entity_base
@@ -190,6 +213,8 @@ entity_solid_collision:
     lda ($7E),y
     pha
     and #$F
+    asl
+    asl
     tay
     lda #$0
     jsr direct_push
@@ -197,8 +222,7 @@ entity_solid_collision:
     ldx #$2
     jsr reg_pop
     pla
-    lsr
-    lsr
+    and #$F0
     lsr
     lsr
     tay
@@ -254,12 +278,17 @@ negative_val_pushed:
     jsr transfer_ptr_to_stk
     jsr stk_add
     jsr pop_to_ptr
+    rts
 no_correction_needed:
+    lda $60
+    jsr update_collision_byte
     rts
 check_collision_and_correct:
 ; $0 in a for x, $1 for y
 ; ptrs should be aligned for collisions
     pha
+    lda #$0
+    sta $60
     jsr return_to_entity_base
     jsr entity_solid_collision
     pla
@@ -270,15 +299,80 @@ check_collision_and_correct:
     jsr ptr_sub
     jsr swap_ptrs
     pla
+    pha
     beq y_correction_needed
     jsr apply_x_correction
+    lda #$1
+    sta $60
+    pla
     jmp check_collision_and_correct
 y_correction_needed:
     jsr apply_y_correction
+    lda #$2
+    sta $60
+    pla
     jmp check_collision_and_correct
+update_collision_byte:
+    pha
+    jsr return_to_entity_base
+    ldy #$1F
+    pla
+    cmp #$1
+    bne update_y_collision
+    lda #$FE
+    and ($7E),y
+    ora #$1
+    sta ($7E),y 
+    rts
+update_y_collision:
+    lda #$FD
+    and ($7E),y
+    ora #$2
+    sta ($7E),y
+    rts
+; set carry if entity is touching the ground
+is_on_ground:
+    jsr return_to_entity_base
+    ldy #$1F
+    lda ($7E),y
+    and #$2
+    beq not_on_ground
+    jsr get_entity_vel
+    lda $5
+    bmi not_on_ground
+    sec
+    rts
+not_on_ground:
+    clc
+    rts
+correct_velocity_vector:
+    jsr return_to_entity_base
+    ldy #$1F
+    lda ($7E),y
+    pha
+    jsr get_entity_vel
+    pla
+    pha
+    and #$1
+    beq no_x_vel_fix
+    ldx #$0
+    jsr reg_zero
+no_x_vel_fix:
+    pla
+    and #$2
+    beq no_y_vel_fix
+    ldx #$1
+    jsr reg_zero
+no_y_vel_fix:
+    jmp set_entity_vel
 skip_colliders:
     jsr apply_x_velocity
     jsr apply_y_velocity
+    jsr return_to_entity_base
+    ldy #$1F
+    lda ($7E),y
+    and #$FD
+    sta ($7E),y
     jmp no_solid_colliders
 entity_update:
 ;entity should be in main ptr, level in reserve
@@ -288,6 +382,7 @@ entity_update:
     bne is_valid_entity
     rts
 is_valid_entity:
+    jsr entity_behavior_switch
     jsr swap_ptrs
     jsr return_to_level_base
     jsr ptr_double_inc
@@ -304,8 +399,7 @@ is_valid_entity:
     sta $7F
     ldy #$0
     lda ($7E),y
-    ;change this to beq, just for testing
-    jmp skip_colliders
+    beq skip_colliders
     pha
     jsr ptr_inc
     jsr swap_ptrs
@@ -339,7 +433,14 @@ solid_colliders_y_loop:
     sbc #$1
     bne solid_colliders_x_loop
 no_solid_colliders:
+    jsr correct_velocity_vector
     jsr update_sprite_pos
+    rts
+entity_behavior_switch:
+    cmp #$1
+    bne not_player_entity
+    jsr player_update
+not_player_entity:
     rts
 
 

@@ -25,6 +25,7 @@ sprite_attribute_init:
     jsr randinit
     rts
 start:
+    jmp rect_collide_tester
     lda #$80
     jsr screen_mode
     lda #$0

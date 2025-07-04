@@ -62,10 +62,10 @@ direct_pop:
     txa
     ldx $3F
     sta $3F
+    inx
     ldy $40,x
     inx
     lda $40,x
-    inx
     pha
     txa
     ldx $3F
@@ -210,17 +210,22 @@ stk_add:
 ;add the top 2 values on the stack
     ldx $3F
     clc
+    inx
     lda $40,x
     inx
     inx
-    adc $40,x 
+    adc $40,x
+    sta $40,x 
     dex
     lda $40,x
     inx
     inx
     adc $40,x
+    sta $40,x
+    dex
     dex
     stx $3F
+    clc
     rts
 sub_sixteen:
 ;subtract r1 from r0
@@ -275,12 +280,15 @@ fixed_to_int:
     ror $3
     ror $2
     rts
-flip_carry:
-    bcs turn_off_carry
-    sec
-    rts
-turn_off_carry:
+ltoeq:
+;set carry if less than or equal to based on flags
+    beq ltoeq_equal
+    bcc ltoeq_less
     clc
+    rts
+ltoeq_less:
+    sec
+ltoeq_equal:
     rts
 rectangle_collide:
 ;r1x, r1w, r1y, r1h, r2x, r2w, r2y, r2h
@@ -292,21 +300,25 @@ rectangle_collide:
     ldx #$7
     jsr reg_push
     jsr stk_add
+    ; r2y + r2h
     ldx #$4
     jsr reg_push
     ldx #$5
     jsr reg_push
     jsr stk_add
+    ; r2x + r2w
     ldx #$2
     jsr reg_push
     ldx #$3
     jsr reg_push
     jsr stk_add
+    ; r1y + r1h
     ldx #$0
     jsr reg_push
     ldx #$1
     jsr reg_push
     jsr stk_add
+    ;r1x + r1w
     ldx #$0
     ldy #$8
     jsr reg_mov
@@ -330,7 +342,7 @@ rectangle_collide:
     ldx #$1
     jsr reg_pop
     jsr cmp_sixteen
-    jsr flip_carry
+    jsr ltoeq
     bcc restore_stack_and_ret
     ldx #$2
     ldy #$0
@@ -338,7 +350,7 @@ rectangle_collide:
     ldx #$1
     jsr reg_pop
     jsr cmp_sixteen
-    jsr flip_carry
+    jsr ltoeq
 restore_stack_and_ret:
     pla
     sta $3F

@@ -4,7 +4,7 @@ $7C/$7D is another swappable data pointer
 entity format: type (1), sprite assignment (1), current sprite used (1), x pos (2, fixed-point), y pos (2, fixed-point),
 x vel (2, fixed-point), y vel (2, fixed-point), hitbox (2 bytes, first is offset from top left in two 4-bit numbers,
 second are the width and height of the box), health (high bit signifies invisibility, lower 7 are health points),
-animation timer (1), animation time (1), number of frames (1), frame list (variable), whatever is left is free to use
+animation timer (1), animation time (1), number of frames (1), frame list (variable), whatever is left is free to use, last byte is used for colliders
 
 zpg map:
 $02-$21 r0-rf
