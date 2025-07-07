@@ -49,8 +49,8 @@ player_update:
     beq right_not_pressed
     lda #$0
     ldy #$2
-    tax
-    jsr reg_set
+    sty $2
+    sta $3
     jmp skip_dpad_checks
 right_not_pressed:
     jsr check_left
@@ -60,10 +60,23 @@ right_not_pressed:
     ldx #$1
     jsr reg_set
 skip_dpad_checks:
+    jsr is_on_ground
+    bcc skip_jump_check
+    jsr check_a
+    beq skip_jump_check
+    ldy #$E8
+    lda #$FF
+    sty $4
+    sta $5
+skip_jump_check:
     jsr set_entity_vel
-
+    rts
 player_init:
-    lda #$0
-    jsr set_entity_base
-    jsr destroy_entity
-    
+    jsr return_to_entity_base
+    ldy #$B
+    lda #$20
+    sta ($7E),y
+    iny
+    lda #$CF
+    sta ($7E),y
+    rts

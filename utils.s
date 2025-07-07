@@ -1,5 +1,6 @@
 *= $1000
 ;y holds low byte, a holds high
+;dynamic register addressing has been largely phased out for performance reasons
 reg_set:
     inx
     pha
@@ -19,14 +20,9 @@ reg_get:
     ldy $00,x
     rts
 reg_zero:
-    inx
-    txa
-    asl
-    tax
     lda #$0
-    sta $01,x
-    sta $00,x
-    rts
+    tay
+    jmp reg_set
 reg_mov:
 ;move x to y
     inx

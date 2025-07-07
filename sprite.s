@@ -54,16 +54,16 @@ find_availibility_loop:
 align_vera_to_attributes:
     tay
     lda #$0
-    tax
-    jsr reg_set
-    ldx #$1
+    sty $2
+    sta $3
     ldy #$8
-    jsr reg_set
+    sty $4
+    sta $5
     jsr mult_sixteen
     lda #$FC
     ldy #$0
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jsr add_sixteen
     lda $2
     sta $9F20
@@ -77,16 +77,16 @@ align_vera_to_attributes:
 calculate_spritesheet_address:
     tay
     lda #$0
-    tax
-    jsr reg_set
+    sty $2
+    sta $3
     ldy #$4
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jsr mult_sixteen
     lda #$9
     ldy #$80
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jsr add_sixteen
     rts
 assign_data_to_sprite:
@@ -96,8 +96,8 @@ assign_data_to_sprite:
     jsr align_vera_to_attributes
     pla
     jsr calculate_spritesheet_address
-    ldx #$0
-    jsr reg_get
+    ldy $2
+    lda $3
     sty $9F23
     sta $9F23
     rts
@@ -135,12 +135,14 @@ turn_on_sprite:
 set_sprite_pos:
 ;x in r0, y in r1
     pha
-    ldx #$0
-    ldy #$3
-    jsr reg_mov
-    ldx #$1
-    ldy #$4
-    jsr reg_mov
+    ldy $2
+    lda $3
+    sty $8
+    sta $9
+    ldy $4
+    lda $5
+    sty $A
+    sta $B
     pla
     jsr align_vera_to_attributes
     lda #$2

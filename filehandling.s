@@ -73,19 +73,19 @@ valid_sprite_nibble:
     pla
     tay
     lda #$0
-    tax
-    jsr reg_set
+    sty $2
+    sta $3
     ldy #$80
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jsr mult_sixteen
     lda #$30
     ldy #$0
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jsr add_sixteen
-    ldx #$0
-    jsr reg_get
+    ldy $2
+    lda $3
     pha
     tya
     tax

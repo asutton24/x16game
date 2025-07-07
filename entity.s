@@ -1,16 +1,16 @@
 set_entity_base:
     tay
     lda #$0
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     ldy #$20
-    ldx #$0
-    jsr reg_set
+    sty $2
+    sta $3
     jsr mult_sixteen
     lda #$88
     ldy #$0
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jsr add_sixteen
     lda $2
     sta $7E
@@ -96,13 +96,24 @@ entity_init:
     lda #$0
     jsr assign_data_to_sprite
     lda #$0
-    tax
-    tay
-    jsr reg_set
+    sta $2
+    sta $3
     jsr ptr_double_inc
     lda #$0
     tay
     sta ($7E),y
+    jsr ptr_inc
+    ldx #$0
+    jsr transfer_reg_to_ptr
+    jsr ptr_double_inc
+    ldx #$0
+    jsr transfer_reg_to_ptr
+    jsr ptr_double_inc
+    ldx #$0
+    jsr transfer_reg_to_ptr
+    jsr ptr_double_inc
+    ldx #$0
+    jsr transfer_reg_to_ptr
     rts
 apply_gravity:
     lda $3E
@@ -113,23 +124,21 @@ valid_gravity_frame:
     jsr get_entity_vel
     ldx #$0
     jsr reg_push
-    ldx #$1
-    ldy #$0
-    jsr reg_mov
     lda #$0
     ldy #$1
-    ldx #$1
-    jsr reg_set
+    sty $2
+    sta $3
     jsr add_sixteen
-    ldx #$0
-    ldy #$1
-    jsr reg_mov
+    ldy $2
+    lda $3
+    sty $4
+    sta $5
     ldx #$0
     jsr reg_pop
     jmp set_entity_vel
 apply_y_velocity:
-    lda #$2
     jsr return_to_entity_base
+    lda #$2
     jmp skip_x_vel_indexing
 apply_x_velocity:
     jsr return_to_entity_base
@@ -169,19 +178,22 @@ update_sprite_pos:
     ldx #$0
     jsr transfer_ptr_to_reg
     jsr fixed_to_int
-    ldx #$0
-    ldy #$2
-    jsr reg_mov
+    ldy $2
+    lda $3
+    sty $6
+    sta $7
     jsr ptr_double_inc
     ldx #$0
     jsr transfer_ptr_to_reg
     jsr fixed_to_int
-    ldx #$0
-    ldy #$1
-    jsr reg_mov
-    ldx #$2
-    ldy #$0
-    jsr reg_mov
+    ldy $2
+    lda $3
+    sty $4
+    sta $5
+    ldy $6
+    lda $7
+    sty $2
+    sta $3
     pla
     jsr set_sprite_pos
     rts
@@ -236,26 +248,28 @@ entity_solid_collision:
     lda ($7E),y
     pha
     and #$F
+    asl
+    asl
     tay
     lda #$0
-    ldx #$3
-    jsr reg_set
+    sty $8
+    sta $9
     pla
-    lsr
-    lsr
+    and #$F0
     lsr
     lsr
     tay
     lda #$0
-    ldx #$1
-    jsr reg_set
+    sty $4
+    sta $5
     jmp rectangle_collide
 apply_y_correction:
-    lda #$2
     jsr return_to_entity_base
+    lda #$2
     jmp skip_x_correction_index
 apply_x_correction:
 ; have entity in ptr
+    jsr return_to_entity_base
     lda #$0
 skip_x_correction_index:
     clc
@@ -286,9 +300,10 @@ no_correction_needed:
 check_collision_and_correct:
 ; $0 in a for x, $1 for y
 ; ptrs should be aligned for collisions
+    ldx #$0
+    stx $60
+check_collision_and_correct_loop:
     pha
-    lda #$0
-    sta $60
     jsr return_to_entity_base
     jsr entity_solid_collision
     pla
@@ -300,19 +315,20 @@ check_collision_and_correct:
     jsr swap_ptrs
     pla
     pha
-    beq y_correction_needed
+    bne y_correction_needed
     jsr apply_x_correction
     lda #$1
     sta $60
     pla
-    jmp check_collision_and_correct
+    jmp check_collision_and_correct_loop
 y_correction_needed:
     jsr apply_y_correction
     lda #$2
     sta $60
     pla
-    jmp check_collision_and_correct
+    jmp check_collision_and_correct_loop
 update_collision_byte:
+    beq reset_collision_byte
     pha
     jsr return_to_entity_base
     ldy #$1F
@@ -325,9 +341,17 @@ update_collision_byte:
     sta ($7E),y 
     rts
 update_y_collision:
+    cmp #$2
     lda #$FD
     and ($7E),y
     ora #$2
+    sta ($7E),y
+    rts
+reset_collision_byte:
+    jsr return_to_entity_base
+    ldy #$1F
+    lda ($7E),y
+    and #$FC
     sta ($7E),y
     rts
 ; set carry if entity is touching the ground
@@ -355,24 +379,25 @@ correct_velocity_vector:
     pha
     and #$1
     beq no_x_vel_fix
-    ldx #$0
-    jsr reg_zero
+    lda #$0
+    sta $2
+    sta $3
 no_x_vel_fix:
     pla
     and #$2
     beq no_y_vel_fix
-    ldx #$1
-    jsr reg_zero
+    lda #$0
+    sta $4
+    sta $5
 no_y_vel_fix:
     jmp set_entity_vel
 skip_colliders:
+    jsr swap_ptrs
+    inc $3F
+    inc $3F
     jsr apply_x_velocity
     jsr apply_y_velocity
-    jsr return_to_entity_base
-    ldy #$1F
-    lda ($7E),y
-    and #$FD
-    sta ($7E),y
+    jsr reset_collision_byte
     jmp no_solid_colliders
 entity_update:
 ;entity should be in main ptr, level in reserve
@@ -403,6 +428,7 @@ is_valid_entity:
     pha
     jsr ptr_inc
     jsr swap_ptrs
+    jsr reset_collision_byte
     jsr apply_x_velocity
     pla
 solid_colliders_x_loop:
@@ -431,7 +457,7 @@ solid_colliders_y_loop:
     pla
     sec
     sbc #$1
-    bne solid_colliders_x_loop
+    bne solid_colliders_y_loop
 no_solid_colliders:
     jsr correct_velocity_vector
     jsr update_sprite_pos

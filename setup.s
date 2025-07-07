@@ -25,12 +25,9 @@ sprite_attribute_init:
     jsr randinit
     rts
 start:
-    jmp rect_collide_tester
     lda #$80
     jsr screen_mode
     lda #$0
-    ldx #$0
-    jsr load_level_into_ram
     ldx #$0
     jsr reg_zero
     jsr GRAPH_init
@@ -44,6 +41,7 @@ start:
     jsr load_level_into_ram
     lda #$0
     jsr set_level_base
+    jsr draw_playfield
     jsr swap_ptrs
     lda #$0
     ldx #$0
@@ -52,21 +50,6 @@ start:
     lda #$1
     ldx #$0
     jsr entity_init
-    lda #$0
-    ldy #$1
-    tax
-    jsr reg_set
-    ldx #$1
-    tay
-    jsr reg_set
-    jsr set_entity_vel
-    ldx #$1
-    ldy #$0
-    jsr reg_mov
-    lda #$0
-    ldy #$FC
-    ldx #$1
-    jsr reg_set
-    lda #$0
-    jsr set_entity_pos
+    jsr player_init
+    jsr return_to_entity_base
     jmp frame_loop
