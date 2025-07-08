@@ -327,6 +327,42 @@ y_correction_needed:
     sta $60
     pla
     jmp check_collision_and_correct_loop
+update_grounded_byte:
+    jsr return_to_entity_base
+    ldy #$5
+    lda ($7E),y
+    sta $2
+    iny
+    lda ($7E),y
+    sta $3
+    ldy #$1F
+    lda ($7E),y
+    pha
+    lda #$0
+    sta $4
+    sta $5
+    jsr cmp_sixteen
+    bne grounded_affected
+    pla
+    rts
+grounded_affected:
+    lda $3
+    bmi clear_grounded
+    pla
+    pha
+    and #$2
+    bne clear_grounded
+    pla
+    ora #$4
+    ldy #$1F
+    sta ($7E),y
+    rts
+clear_grounded:
+    pla
+    and #$FB
+    ldy #$1F
+    sta ($7E),y
+    rts
 update_collision_byte:
     beq reset_collision_byte
     pha
@@ -346,6 +382,11 @@ update_y_collision:
     and ($7E),y
     ora #$2
     sta ($7E),y
+    rts
+get_collison_byte:
+    jsr return_to_entity_base
+    ldy #$1F
+    lda ($7E),y
     rts
 reset_collision_byte:
     jsr return_to_entity_base
@@ -407,7 +448,7 @@ entity_update:
     bne is_valid_entity
     rts
 is_valid_entity:
-    jsr entity_behavior_switch
+    pha
     jsr swap_ptrs
     jsr return_to_level_base
     jsr ptr_double_inc
@@ -459,6 +500,9 @@ solid_colliders_y_loop:
     sbc #$1
     bne solid_colliders_y_loop
 no_solid_colliders:
+    pla
+    jsr update_grounded_byte
+    jsr entity_behavior_switch
     jsr correct_velocity_vector
     jsr update_sprite_pos
     rts

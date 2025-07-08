@@ -20,11 +20,11 @@ use_controller_input:
 ;button is pressed if z flag is clear
 check_left:
     jsr get_player_input
-    and #$2
+    and #$1
     rts
 check_right:
     jsr get_player_input
-    and #$1
+    and #$2
     rts
 check_b:
     jsr get_player_input
@@ -44,7 +44,7 @@ player_update:
     jsr apply_gravity
     jsr get_entity_vel
     jsr verify_valid_dpad
-    beq skip_dpad_checks
+    beq left_not_pressed
     jsr check_right
     beq right_not_pressed
     lda #$0
@@ -57,11 +57,17 @@ right_not_pressed:
     beq skip_dpad_checks
     lda #$FF
     ldy #$FE
-    ldx #$1
-    jsr reg_set
+    sty $2
+    sta $3
+    jmp skip_dpad_checks
+left_not_pressed:
+    lda #$0
+    sta $2
+    sta $3
 skip_dpad_checks:
-    jsr is_on_ground
-    bcc skip_jump_check
+    jsr get_collison_byte
+    and #$4
+    beq skip_jump_check
     jsr check_a
     beq skip_jump_check
     ldy #$E8
