@@ -48,7 +48,7 @@ player_update:
     jsr check_right
     beq right_not_pressed
     lda #$0
-    ldy #$2
+    ldy #$3
     sty $2
     sta $3
     jmp skip_dpad_checks
@@ -56,7 +56,7 @@ right_not_pressed:
     jsr check_left
     beq skip_dpad_checks
     lda #$FF
-    ldy #$FE
+    ldy #$FD
     sty $2
     sta $3
     jmp skip_dpad_checks
@@ -65,12 +65,12 @@ left_not_pressed:
     sta $2
     sta $3
 skip_dpad_checks:
-    jsr get_collison_byte
+    jsr get_collision_byte
     and #$4
     beq skip_jump_check
-    jsr check_a
-    beq skip_jump_check
-    ldy #$E8
+    jsr check_b
+    bne skip_jump_check
+    ldy #$FA
     lda #$FF
     sty $4
     sta $5

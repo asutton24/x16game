@@ -87,6 +87,9 @@ entity_init:
     pla
     ldy #$0
     sta ($7E),y
+    tya
+    ldy #$1F
+    sta ($7E),y
     jsr assign_sprite
     jsr get_entity_sprite_index
     pha
@@ -125,7 +128,7 @@ valid_gravity_frame:
     ldx #$0
     jsr reg_push
     lda #$0
-    ldy #$1
+    ldy #$2
     sty $2
     sta $3
     jsr add_sixteen
@@ -329,7 +332,7 @@ y_correction_needed:
     jmp check_collision_and_correct_loop
 update_grounded_byte:
     jsr return_to_entity_base
-    ldy #$5
+    ldy #$9
     lda ($7E),y
     sta $2
     iny
@@ -351,7 +354,7 @@ grounded_affected:
     pla
     pha
     and #$2
-    bne clear_grounded
+    beq clear_grounded
     pla
     ora #$4
     ldy #$1F
@@ -362,9 +365,10 @@ clear_grounded:
     and #$FB
     ldy #$1F
     sta ($7E),y
+no_collision_update:
     rts
 update_collision_byte:
-    beq reset_collision_byte
+    beq no_collision_update
     pha
     jsr return_to_entity_base
     ldy #$1F
@@ -383,7 +387,7 @@ update_y_collision:
     ora #$2
     sta ($7E),y
     rts
-get_collison_byte:
+get_collision_byte:
     jsr return_to_entity_base
     ldy #$1F
     lda ($7E),y
@@ -500,8 +504,8 @@ solid_colliders_y_loop:
     sbc #$1
     bne solid_colliders_y_loop
 no_solid_colliders:
-    pla
     jsr update_grounded_byte
+    pla
     jsr entity_behavior_switch
     jsr correct_velocity_vector
     jsr update_sprite_pos
