@@ -1,5 +1,12 @@
 import ast
 import pygame
+import os
+
+
+spritePath = 'editors/levelEditor/charList.spr'
+
+if os.name == "nt":
+    spritePath = 'editors\\levelEditor\\charList.spr'
 
 
 class Sprite:
@@ -128,7 +135,7 @@ class Text:
     chars = []
     lineCount = 0
     dict = 'abcdefghijklmnopqrstuvwxyz 1234567890.?!|-$'
-    with open('editors\\levelEditor\\charList.spr', 'r') as file:
+    with open(spritePath, 'r') as file:
         lines = file.readlines()
         for line in lines:
             if lineCount == 0:

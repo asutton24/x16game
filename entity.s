@@ -509,6 +509,7 @@ no_solid_colliders:
     jsr entity_behavior_switch
     jsr correct_velocity_vector
     jsr update_sprite_pos
+    jsr update_animation
     rts
 entity_behavior_switch:
     cmp #$1

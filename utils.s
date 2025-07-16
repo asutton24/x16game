@@ -267,6 +267,14 @@ upper_byte_equal:
     lda $2
     cmp $4
     rts
+;shift r0 left x times
+shift_left:
+    clc
+    rol $2
+    rol $3
+    dex
+    bne shift_left
+    rts
 fixed_to_int:
 ;Converts fixed point number in r0 to integer
     clc

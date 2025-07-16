@@ -56,10 +56,8 @@ align_vera_to_attributes:
     lda #$0
     sty $2
     sta $3
-    ldy #$8
-    sty $4
-    sta $5
-    jsr mult_sixteen
+    ldx #$3
+    jsr shift_left
     lda #$FC
     ldy #$0
     sty $4
@@ -79,10 +77,8 @@ calculate_spritesheet_address:
     lda #$0
     sty $2
     sta $3
-    ldy #$4
-    sty $4
-    sta $5
-    jsr mult_sixteen
+    ldx #$2
+    jsr shift_left
     lda #$9
     ldy #$80
     sty $4
@@ -130,6 +126,25 @@ turn_off_sprite:
 turn_on_sprite:
     jsr turn_off_sprite
     ora #$C
+    sta $9F23
+    rts
+face_right:
+    jsr align_vera_to_attributes
+    lda #$6
+    jsr add_to_vera
+    lda #$1
+    sta $9F22
+    lda #$FE
+    and $9F23
+    sta $9F23
+    rts
+face_left:
+    jsr align_vera_to_attributes
+    lda #$6
+    jsr add_to_vera
+    lda #$1
+    sta $9F22
+    ora $9F23
     sta $9F23
     rts
 set_sprite_pos:
