@@ -120,7 +120,7 @@ entity_init:
     rts
 apply_gravity:
     lda $3E
-    and #$F
+    and #$3
     beq valid_gravity_frame
     rts
 valid_gravity_frame:
@@ -128,7 +128,7 @@ valid_gravity_frame:
     ldx #$0
     jsr reg_push
     lda #$0
-    ldy #$2
+    ldy #$1
     sty $2
     sta $3
     jsr add_sixteen
@@ -282,12 +282,12 @@ skip_x_correction_index:
     lda ($7E),y
     bpl positive_vel
     lda #$0
-    ldy #$4
+    ldy #$1
     jsr direct_push
     jmp negative_val_pushed
 positive_vel:
     lda #$FF
-    ldy #$FC
+    ldy #$FF
     jsr direct_push
 negative_val_pushed:
     lda #$5
@@ -471,6 +471,17 @@ is_valid_entity:
     lda ($7E),y
     beq skip_colliders
     pha
+    ldx #$4
+    ldy #$7
+zero_vel_loop:
+    lda ($7E),y
+    bne not_zero_vel
+    iny
+    dex
+    bne zero_vel_loop
+    pla
+    jmp skip_colliders
+not_zero_vel:
     jsr ptr_inc
     jsr swap_ptrs
     jsr reset_collision_byte

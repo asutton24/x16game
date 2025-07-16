@@ -176,12 +176,13 @@ skip_dpad_checks:
     beq skip_jump_check
     jsr check_b
     bne skip_jump_check
-    ldy #$FA
+    ldy #$F9
     lda #$FF
     sty $4
     sta $5
 skip_jump_check:
     jsr set_entity_vel
+    jsr update_player_sprite
     rts
 player_init:
     jsr return_to_entity_base
