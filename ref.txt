@@ -15,3 +15,8 @@ $40-$5F 16-bit stack
 $60-$6F main work ram
 $7C-$7D aux ptr
 $7E-$7F main ptr
+
+Entities:
+0: invalid
+1: player
+2/3: projectile

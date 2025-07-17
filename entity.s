@@ -1,12 +1,10 @@
 set_entity_base:
     tay
     lda #$0
-    sty $4
-    sta $5
-    ldy #$20
     sty $2
     sta $3
-    jsr mult_sixteen
+    ldx #$5
+    jsr shift_left
     lda #$88
     ldy #$0
     sty $4
@@ -471,6 +469,7 @@ is_valid_entity:
     lda ($7E),y
     beq skip_colliders
     pha
+    jsr return_to_entity_base
     ldx #$4
     ldy #$7
 zero_vel_loop:

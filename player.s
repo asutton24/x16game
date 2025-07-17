@@ -176,7 +176,7 @@ skip_dpad_checks:
     beq skip_jump_check
     jsr check_b
     bne skip_jump_check
-    ldy #$F9
+    ldy #$F7
     lda #$FF
     sty $4
     sta $5
