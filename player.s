@@ -187,10 +187,10 @@ skip_jump_check:
 player_init:
     jsr return_to_entity_base
     ldy #$B
-    lda #$20
+    lda #$51
     sta ($7E),y
     iny
-    lda #$CF
+    lda #$6E
     sta ($7E),y
     ldy #$10
     lda #$0

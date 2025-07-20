@@ -13,6 +13,7 @@ $3E frame clock
 $3F 16 bit-stack ptr
 $40-$5F 16-bit stack
 $60-$6F main work ram
+$7A-$7B disconnected pointer
 $7C-$7D aux ptr
 $7E-$7F main ptr
 

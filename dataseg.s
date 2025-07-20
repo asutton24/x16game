@@ -21,3 +21,5 @@ dcb $04 $00 $04 $04 $01
 dcb $00 $00 $00 $00 $09
 ;shooting jumping sprite $E19
 dcb $00 $00 $00 $00 $0A
+;bullet sprite $E1E
+dcb $00 $00 $00 $00 $0B

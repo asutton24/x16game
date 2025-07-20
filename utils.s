@@ -120,6 +120,13 @@ ptr_set_at:
     dey
     sta ($7E),y
     rts
+ptr_zero_set_at:
+    lda #$0
+    tay
+    sta ($7E),y
+    iny
+    sta ($7E),y
+    rts
 ptr_inc:
     inc $7E
     bne skip_ptr_inc_h
@@ -163,6 +170,15 @@ swap_ptrs:
     sta $7D
     pla
     sta $7C
+    rts
+ptrs_equal:
+    lda $7F
+    cmp $7D
+    beq check_low_ptr
+    rts
+check_low_ptr:
+    lda $7E
+    cmp $7C
     rts
 mult_eight:
 ; $60 * $61
@@ -323,12 +339,14 @@ rectangle_collide:
     jsr reg_push
     jsr stk_add
     ;r1x + r1w
-    ldx #$0
-    ldy #$8
-    jsr reg_mov
-    ldx #$4
-    ldy #$1
-    jsr reg_mov
+    lda $2
+    sta $12
+    lda $3
+    sta $13
+    lda $A
+    sta $4
+    lda $B
+    sta $5
     ldx #$0
     jsr reg_pop
     jsr cmp_sixteen

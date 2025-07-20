@@ -25,6 +25,22 @@ goto_next_entity:
     lda #$20
     jsr ptr_add
     rts
+find_empty_entity:
+    lda #$0
+    tax
+    tay
+    sta $7E
+    lda #$88
+    sta $7F
+continue_entity_search:
+    lda ($7E),y
+    beq found_empty
+    lda #$20
+    jsr ptr_add
+    inx
+    bne continue_entity_search
+found_empty:
+    rts
 entity_clear:
     jsr set_entity_base
     lda #$FF
@@ -96,25 +112,17 @@ entity_init:
     tax
     lda #$0
     jsr assign_data_to_sprite
-    lda #$0
-    sta $2
-    sta $3
     jsr ptr_double_inc
     lda #$0
     tay
     sta ($7E),y
     jsr ptr_inc
-    ldx #$0
-    jsr transfer_reg_to_ptr
+    ldx #$4
+pos_vel_zero_loop:
+    jsr ptr_zero_set_at
     jsr ptr_double_inc
-    ldx #$0
-    jsr transfer_reg_to_ptr
-    jsr ptr_double_inc
-    ldx #$0
-    jsr transfer_reg_to_ptr
-    jsr ptr_double_inc
-    ldx #$0
-    jsr transfer_reg_to_ptr
+    dex
+    bne pos_vel_zero_loop
     rts
 apply_gravity:
     lda $3E
@@ -155,6 +163,7 @@ skip_x_vel_indexing:
     jsr ptr_add
     ldx #$1
     jsr transfer_ptr_to_reg
+    clc
     jsr add_sixteen
     jsr return_to_entity_base
     pla
@@ -214,6 +223,10 @@ entity_solid_collision:
     jsr transfer_ptr_to_reg
     jsr ptr_double_inc
     jsr swap_ptrs
+    jsr load_entity_hitbox_into_r0_r3
+dont_quit:
+    jmp rectangle_collide
+load_entity_hitbox_into_r0_r3:
     jsr return_to_entity_base
     lda #$3
     jsr ptr_add
@@ -263,6 +276,17 @@ entity_solid_collision:
     lda #$0
     sty $4
     sta $5
+    rts
+entity_entity_collision:
+    jsr load_entity_hitbox_into_r0_r3
+    ldx #$7
+move_r0_r3_to_r4_r7:
+    lda $2,x
+    sta $A,x
+    dex
+    bpl move_r0_r3_to_r4_r7
+    jsr swap_ptrs
+    jsr load_entity_hitbox_into_r0_r3
     jmp rectangle_collide
 apply_y_correction:
     jsr return_to_entity_base
@@ -469,6 +493,8 @@ is_valid_entity:
     lda ($7E),y
     beq skip_colliders
     pha
+    jsr ptr_inc
+    jsr swap_ptrs
     jsr return_to_entity_base
     ldx #$4
     ldy #$7
@@ -479,10 +505,9 @@ zero_vel_loop:
     dex
     bne zero_vel_loop
     pla
+    jsr swap_ptrs
     jmp skip_colliders
 not_zero_vel:
-    jsr ptr_inc
-    jsr swap_ptrs
     jsr reset_collision_byte
     jsr apply_x_velocity
     pla
