@@ -182,8 +182,44 @@ skip_dpad_checks:
     sta $5
 skip_jump_check:
     jsr set_entity_vel
+    jsr return_to_entity_base
+    ldy #$1E
+    lda ($7E),y
+    bne decrement_shooting_hold
+    jsr check_a
+    bne skip_shooting_check
+    lda #$20
+    ldy #$1E
+    sta ($7E),y
+    ldy #$8
+    lda ($7E),y
+    pha
+    jsr get_entity_pos
+    pla
+    bmi negative_proj_dir
+    lda #$0
+    ldy #$6
+    sty $6
+    sta $7
+    bpl finished_proj_dir
+negative_proj_dir:
+    lda #$FF
+    ldy #$FA
+    sty $6
+    sta $7
+finished_proj_dir:
+    lda #$0
+    sta $8
+    sta $9
+    jsr create_projectile
+skip_shooting_check:
     jsr update_player_sprite
     rts
+decrement_shooting_hold:
+    sec
+    sbc #$1
+    sta ($7E),y
+    jmp skip_shooting_check
 player_init:
     jsr return_to_entity_base
     ldy #$B
@@ -201,7 +237,10 @@ player_init:
     sta ($7E),y
     ldy #$1
     lda ($7E),y
+    pha
     tax
     lda #$1
     jsr assign_data_to_sprite
+    pla
+    jsr turn_on_sprite
     rts

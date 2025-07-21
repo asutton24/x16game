@@ -26,3 +26,5 @@ joystick_scan:
 joystick_get:
 *= $FECF
 entropy_get:
+*= $FECC
+monitor:

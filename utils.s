@@ -180,6 +180,14 @@ check_low_ptr:
     lda $7E
     cmp $7C
     rts
+push_current_ptr:
+    ldy $7E
+    lda $7F
+    jmp direct_push
+set_ptr_from_stk:
+    jsr direct_pop
+    sty $7E
+    sta $7F
 mult_eight:
 ; $60 * $61
 	lda #$0

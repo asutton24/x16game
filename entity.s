@@ -92,6 +92,30 @@ get_entity_sprite_index:
     ldy #$1
     lda ($7E),y
     rts
+out_of_bounds:
+    jsr get_entity_pos
+    ldy $4
+    lda $5
+    jsr direct_push
+    ldy #$FD
+    lda #$4
+    sty $4
+    sta $5
+    jsr cmp_sixteen
+    bcc check_y_bounds
+    inc $3F
+    inc $3F
+    rts
+check_y_bounds:
+    jsr direct_pop
+    sty $2
+    sta $3
+    lda #$3
+    ldy #$BD
+    sty $4
+    sta $5
+    jsr cmp_sixteen
+    rts
 entity_init:
 ; entity type in a, number in x
     pha
@@ -107,7 +131,6 @@ entity_init:
     jsr assign_sprite
     jsr get_entity_sprite_index
     pha
-    jsr turn_on_sprite
     pla
     tax
     lda #$0
@@ -174,9 +197,9 @@ skip_x_vel_indexing:
 assign_sprite:
     jsr return_to_entity_base
     jsr find_available_sprite
-    jsr reserve_sprite
     ldy #$1
     sta ($7E),y
+    jsr reserve_sprite
     rts
 update_sprite_pos:
     jsr return_to_entity_base
@@ -550,7 +573,12 @@ entity_behavior_switch:
     cmp #$1
     bne not_player_entity
     jsr player_update
+    rts
 not_player_entity:
+    cmp #$2
+    bne not_player_bullet
+    jsr update_projectile
+not_player_bullet:
     rts
 
 

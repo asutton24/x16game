@@ -16,7 +16,7 @@ dcb $00 $00 $00 $00 $05
 ;running player sprite $E0A
 dcb $04 $00 $04 $04 $01
 ;running shooting sprite $E0F
-dcb $04 $00 $04 $04 $01
+dcb $04 $00 $04 $04 $05
 ;idle jumping sprite $E14
 dcb $00 $00 $00 $00 $09
 ;shooting jumping sprite $E19

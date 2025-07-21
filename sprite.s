@@ -35,6 +35,9 @@ reserve_sprite:
     sta $87F0,x
     rts
 free_sprite:
+    pha
+    jsr turn_off_sprite
+    pla
     jsr convert_acm_to_spr_record
     eor #$FF
     and $87F0,x
@@ -45,11 +48,14 @@ find_available_sprite:
 find_availibility_loop:
     pha
     jsr check_sprite_availability
+    beq sprite_found
     pla
     tax
     inx
     txa
     bne find_availibility_loop
+sprite_found:
+    pla
     rts
 align_vera_to_attributes:
     tay
