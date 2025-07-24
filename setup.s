@@ -52,5 +52,4 @@ start:
     jsr entity_init
     jsr player_init
     jsr return_to_entity_base
-    jsr return_to_entity_base
     jmp frame_loop_start

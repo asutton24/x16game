@@ -21,8 +21,8 @@ update_entity_loop:
     adc #$1
     cmp #$21
     bne update_entity_loop
-wait_for_frame_close:
     jsr randbyte
+wait_for_frame_close:
     jsr RDTIM
     cmp $3E
     beq wait_for_frame_close

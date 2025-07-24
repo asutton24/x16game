@@ -23,3 +23,7 @@ dcb $00 $00 $00 $00 $09
 dcb $00 $00 $00 $00 $0A
 ;bullet sprite $E1E
 dcb $00 $00 $00 $00 $0B
+;spike sprite $E23
+dcb $00 $00 $00 $00 $0C
+;exit sprite $E28
+dcb $00 $00 $00 $00 $0D

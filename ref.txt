@@ -8,6 +8,9 @@ animation timer (E), current frame offset (F), number of frames (10), animation 
 
 zpg map:
 $02-$21 r0-rf
+$36 level status
+$37 current level
+$38-$3A level clock
 $3B-$3D rand byte info
 $3E frame clock
 $3F 16 bit-stack ptr
@@ -21,3 +24,5 @@ Entities:
 0: invalid
 1: player
 2/3: projectile
+4: level exit
+5: spike

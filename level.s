@@ -1,3 +1,48 @@
+;make sure player is initialized first!
+full_level_load:
+    jsr set_level_base
+    jsr GRAPH_clear
+    jsr draw_playfield
+    jsr load_enemies
+    jsr return_to_level_base
+    ldy #$7
+    lda ($7E),y
+    pha
+    dey
+    lda ($7E),y
+    clc
+    adc $7E
+    sta $7E
+    pla
+    adc $7F
+    sta $7F
+    ldx #$0
+pull_extras:
+    pha
+    jsr transfer_ptr_to_reg
+    jsr ptr_double_inc
+    pla
+    tax
+    inx
+    txa
+    cmp #$4
+    bne pull_extras
+    jsr swap_ptrs
+    lda #$88
+    ldy #$0
+    sty $7E
+    sta $7F
+    jsr set_entity_pos
+    ldy $6
+    lda $7
+    sty $2
+    sta $3
+    ldy $8
+    lda $9
+    sty $4
+    sta $5
+    jsr level_exit_init
+    rts
 set_level_base:
     tax
     and #$3
@@ -62,4 +107,50 @@ pf_rect_loader:
     dec $60
     bne playfield_draw_loop
 end_playfield_draw_loop:
+    rts
+load_enemies:
+    jsr return_to_level_base
+    ldy #$5
+    lda ($7E),y
+    pha
+    dey
+    lda ($7E),y
+    clc
+    adc $7E
+    sta $7E
+    pla
+    adc $7F
+    sta $7F
+    lda ($7E),y
+    beq end_playfield_draw_loop
+    pha
+    jsr ptr_inc
+enemy_loader:
+    ldy #$0
+    lda ($7E),y
+    pha
+    jsr ptr_inc
+    ldy #$7
+    ldx #$7
+keep_loading_regs:
+    lda ($7E),y
+    sta $2,x
+    dex
+    dey
+    bpl keep_loading_regs
+    lda #$8
+    jsr ptr_add
+    jsr swap_ptrs
+    pla
+    cmp #$5
+    bne not_spike_init
+    jsr spike_init
+not_spike_init:
+    jsr swap_ptrs
+    pla
+    sec
+    sbc #$1
+    pha
+    bne enemy_loader
+    pla
     rts

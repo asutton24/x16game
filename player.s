@@ -17,6 +17,9 @@ update_player_sprite:
     ldy #$1
     lda ($7E),y
     jsr face_left
+    lda #$1
+    ldy #$1D
+    sta ($7E),y
     sec
     jmp skip_right_facing
 not_left_facing:
@@ -27,6 +30,9 @@ set_right_facing:
     ldy #$1
     lda ($7E),y
     jsr face_right
+    lda #$0
+    ldy #$1D
+    sta ($7E),y
     sec
 skip_right_facing:
     pla
@@ -145,6 +151,11 @@ verify_valid_dpad:
     and #$3
     cmp #$3
     rts
+decrement_shooting_hold:
+    sec
+    sbc #$1
+    sta ($7E),y
+    jmp skip_shooting_check
 ;called within entity update
 player_update:
     jsr apply_gravity
@@ -191,20 +202,20 @@ skip_jump_check:
     lda #$20
     ldy #$1E
     sta ($7E),y
-    ldy #$8
+    ldy #$1D
     lda ($7E),y
     pha
     jsr get_entity_pos
     pla
-    bmi negative_proj_dir
+    bne negative_proj_dir
     lda #$0
-    ldy #$6
+    ldy #$A
     sty $6
     sta $7
     bpl finished_proj_dir
 negative_proj_dir:
     lda #$FF
-    ldy #$FA
+    ldy #$F6
     sty $6
     sta $7
 finished_proj_dir:
@@ -215,11 +226,6 @@ finished_proj_dir:
 skip_shooting_check:
     jsr update_player_sprite
     rts
-decrement_shooting_hold:
-    sec
-    sbc #$1
-    sta ($7E),y
-    jmp skip_shooting_check
 player_init:
     jsr return_to_entity_base
     ldy #$B
@@ -235,6 +241,8 @@ player_init:
     sta ($7E),y
     ldy #$1E
     sta ($7E),y
+    dey
+    sta ($7E),y
     ldy #$1
     lda ($7E),y
     pha
@@ -243,4 +251,21 @@ player_init:
     jsr assign_data_to_sprite
     pla
     jsr turn_on_sprite
+    rts
+check_collision_with_player:
+;entity 0 should ALWAYS be the player
+    lda $7D
+    ldy $7C
+    jsr direct_push
+    lda #$88
+    ldy #$0
+    sty $7C
+    sta $7D
+    jsr entity_entity_collision
+    jsr direct_pop
+    sta $7D
+    sty $7C
+    rts
+damage_player:
+    dec $880D
     rts

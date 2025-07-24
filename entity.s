@@ -106,6 +106,14 @@ out_of_bounds:
     inc $3F
     inc $3F
     rts
+damage_entity:
+    jsr return_to_entity_base
+    ldy #$D
+    lda ($7E),y
+    sec
+    sbc #$1
+    sta ($7E),y
+    rts
 check_y_bounds:
     jsr direct_pop
     sty $2
@@ -310,6 +318,7 @@ move_r0_r3_to_r4_r7:
     bpl move_r0_r3_to_r4_r7
     jsr swap_ptrs
     jsr load_entity_hitbox_into_r0_r3
+    jsr swap_ptrs
     jmp rectangle_collide
 apply_y_correction:
     jsr return_to_entity_base
@@ -481,6 +490,17 @@ no_x_vel_fix:
     sta $5
 no_y_vel_fix:
     jmp set_entity_vel
+no_vel_update:
+    jsr reset_collision_byte
+    pla
+    jsr entity_behavior_switch
+    jsr return_to_entity_base
+    ldy #$0
+    lda ($7E),y
+    beq no_vel_entity_no_longer_exists
+    jsr update_animation
+no_vel_entity_no_longer_exists:
+    rts
 skip_colliders:
     jsr swap_ptrs
     inc $3F
@@ -498,6 +518,16 @@ entity_update:
     rts
 is_valid_entity:
     pha
+    ldx #$4
+    ldy #$7
+zero_vel_loop:
+    lda ($7E),y
+    bne not_zero_vel
+    iny
+    dex
+    bne zero_vel_loop
+    jmp no_vel_update
+not_zero_vel:
     jsr swap_ptrs
     jsr return_to_level_base
     jsr ptr_double_inc
@@ -518,19 +548,6 @@ is_valid_entity:
     pha
     jsr ptr_inc
     jsr swap_ptrs
-    jsr return_to_entity_base
-    ldx #$4
-    ldy #$7
-zero_vel_loop:
-    lda ($7E),y
-    bne not_zero_vel
-    iny
-    dex
-    bne zero_vel_loop
-    pla
-    jsr swap_ptrs
-    jmp skip_colliders
-not_zero_vel:
     jsr reset_collision_byte
     jsr apply_x_velocity
     pla
@@ -565,20 +582,31 @@ no_solid_colliders:
     jsr update_grounded_byte
     pla
     jsr entity_behavior_switch
+    jsr return_to_entity_base
+    ldy #$0
+    lda ($7E),y
+    beq entity_no_longer_exists
     jsr correct_velocity_vector
     jsr update_sprite_pos
     jsr update_animation
+entity_no_longer_exists:
     rts
 entity_behavior_switch:
     cmp #$1
     bne not_player_entity
-    jsr player_update
-    rts
+    jmp player_update
 not_player_entity:
-    cmp #$2
-    bne not_player_bullet
-    jsr update_projectile
+    cmp #$4
+    bcs not_player_bullet
+    jmp update_projectile
 not_player_bullet:
+    bne not_level_exit
+    jmp level_exit_update
+not_level_exit:
+    cmp #$5
+    bne not_spike
+    jmp spike_update
+not_spike:
     rts
 
 

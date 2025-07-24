@@ -19,6 +19,7 @@ class Editor:
 
     def __init__(self, num):
         self.rectangles = []
+        self.enemies = []
         self.cur_color = 0
         self.cur_border = 0
         self.snap_to = 1
@@ -50,10 +51,11 @@ class Editor:
             return -1
         int_16 = lambda x : [(x % 65536) % 256, (x % 65536) // 256]
         int_to_fixed = lambda x : [((x * 4) % 65536) % 256, ((x * 4) % 65536) // 256]
-        header = [0] * 6
+        header = [0] * 8
         playfield = []
         solid_colliders = []
         enemies = []
+        extras = []
         counter = 0
         redundant = False
         for r in self.rectangles:
@@ -69,15 +71,23 @@ class Editor:
             counter += 1
         playfield = [len(playfield) // 9] + [0] + playfield
         solid_colliders = [len(solid_colliders) // 8] + solid_colliders
+        for e in self.enemies:
+            enemies.append(e[0])
+            for i in range(4):
+                enemies += int_16(e[i + 1])
+        enemies = [len(enemies) // 9] + enemies
         if playfield == []: playfield = [0]
         if solid_colliders == []: solid_colliders = [0]
         if enemies == []: enemies = [0] 
-        header[0] = 6
-        header[2] = (len(playfield) + 6) % 256
-        header[3] = (len(playfield) + 6) // 256
-        header[4] = (len(solid_colliders) + len(playfield) + 6) % 256
-        header[5] = (len(solid_colliders) + len(playfield) + 6) // 256
-        full_file = bytes(header + playfield + solid_colliders + enemies)
+        if extras == []: extras = [0]
+        header[0] = 8
+        header[2] = (len(playfield) + 8) % 256
+        header[3] = (len(playfield) + 8) // 256
+        header[4] = (len(solid_colliders) + len(playfield) + 8) % 256
+        header[5] = (len(solid_colliders) + len(playfield) + 8) // 256
+        header[6] = (len(solid_colliders) + len(playfield) + len(enemies) + 8) % 256
+        header[7] = (len(solid_colliders) + len(playfield) + len(enemies) + 8) // 256
+        full_file = bytes(header + playfield + solid_colliders + enemies + extras)
         if len(full_file) > 2048: return -1
         with open("LVL{}.BIN".format(hex(self.file_id)[2:].zfill(2)).upper(), "wb") as file:
             file.write(full_file)

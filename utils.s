@@ -54,7 +54,7 @@ direct_push:
     dex
     stx $3F
     rts
-direct_pop:
+reg_pop:
     txa
     ldx $3F
     sta $3F
@@ -67,10 +67,15 @@ direct_pop:
     ldx $3F
     sta $3F
     pla
-    rts
-reg_pop:
-    jsr direct_pop
     jmp reg_set
+direct_pop:
+    ldx $3F
+    inx
+    ldy $40,x
+    inx
+    lda $40,x
+    stx $3F
+    rts
 reg_negate:
     inx
     txa
@@ -95,7 +100,7 @@ ptr_add:
     adc $7E
     sta $7E
     lda $7F
-    adc #$00
+    adc #$0
     sta $7F
     rts
 ptr_sub:
@@ -263,8 +268,9 @@ mult_sixteen:
     lda $3
     sta $7
     ldy #$10
-    ldx #$0
-    jsr reg_zero
+    lda #$0
+    sta $2
+    sta $3
 mult_sixteen_loop:
     lda $6
     and #$1
@@ -323,28 +329,36 @@ rectangle_collide:
 ;Carry is set if there is a collision
     lda $3F
     pha
-    ldx #$6
-    jsr reg_push
-    ldx #$7
-    jsr reg_push
+    ldy $E
+    lda $F
+    jsr direct_push
+    ldy $10
+    lda $11
+    jsr direct_push
     jsr stk_add
     ; r2y + r2h
-    ldx #$4
-    jsr reg_push
-    ldx #$5
-    jsr reg_push
+    ldy $A
+    lda $B
+    jsr direct_push
+    ldy $C
+    lda $D
+    jsr direct_push
     jsr stk_add
     ; r2x + r2w
-    ldx #$2
-    jsr reg_push
-    ldx #$3
-    jsr reg_push
+    ldy $6
+    lda $7
+    jsr direct_push
+    ldy $8
+    lda $9
+    jsr direct_push
     jsr stk_add
     ; r1y + r1h
-    ldx #$0
-    jsr reg_push
-    ldx #$1
-    jsr reg_push
+    ldy $2
+    lda $3
+    jsr direct_push
+    ldy $4
+    lda $5
+    jsr direct_push
     jsr stk_add
     ;r1x + r1w
     lda $2
@@ -355,30 +369,37 @@ rectangle_collide:
     sta $4
     lda $B
     sta $5
-    ldx #$0
-    jsr reg_pop
+    jsr direct_pop
+    sty $2
+    sta $3
     jsr cmp_sixteen
     bcc restore_stack_and_ret
-    ldx #$6
-    ldy #$1
-    jsr reg_mov
-    ldx #$0
-    jsr reg_pop
+    ldy $E
+    lda $F
+    sty $4
+    sta $5
+    jsr direct_pop
+    sty $2
+    sta $3
     jsr cmp_sixteen
     bcc restore_stack_and_ret
-    ldx #$8
-    ldy #$0
-    jsr reg_mov
-    ldx #$1
-    jsr reg_pop
+    ldy $12
+    lda $13
+    sty $2
+    sta $3
+    jsr direct_pop
+    sty $4
+    sta $5
     jsr cmp_sixteen
     jsr ltoeq
     bcc restore_stack_and_ret
-    ldx #$2
-    ldy #$0
-    jsr reg_mov
-    ldx #$1
-    jsr reg_pop
+    ldy $6
+    lda $7
+    sty $2
+    sta $3
+    jsr direct_pop
+    sty $4
+    sta $5
     jsr cmp_sixteen
     jsr ltoeq
 restore_stack_and_ret:
