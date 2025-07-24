@@ -8,9 +8,10 @@ animation timer (E), current frame offset (F), number of frames (10), animation 
 
 zpg map:
 $02-$21 r0-rf
+$35 current level
 $36 level status
-$37 current level
-$38-$3A level clock
+$37-$39 level clock
+$3A real clock
 $3B-$3D rand byte info
 $3E frame clock
 $3F 16 bit-stack ptr

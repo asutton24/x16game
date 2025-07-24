@@ -165,7 +165,7 @@ player_update:
     jsr check_right
     beq right_not_pressed
     lda #$0
-    ldy #$3
+    ldy #$8
     sty $2
     sta $3
     jmp skip_dpad_checks
@@ -173,7 +173,7 @@ right_not_pressed:
     jsr check_left
     beq skip_dpad_checks
     lda #$FF
-    ldy #$FD
+    ldy #$F9
     sty $2
     sta $3
     jmp skip_dpad_checks
@@ -187,7 +187,7 @@ skip_dpad_checks:
     beq skip_jump_check
     jsr check_b
     bne skip_jump_check
-    ldy #$F7
+    ldy #$EE
     lda #$FF
     sty $4
     sta $5
@@ -199,7 +199,7 @@ skip_jump_check:
     bne decrement_shooting_hold
     jsr check_a
     bne skip_shooting_check
-    lda #$20
+    lda #$10
     ldy #$1E
     sta ($7E),y
     ldy #$1D
@@ -209,13 +209,13 @@ skip_jump_check:
     pla
     bne negative_proj_dir
     lda #$0
-    ldy #$A
+    ldy #$14
     sty $6
     sta $7
     bpl finished_proj_dir
 negative_proj_dir:
     lda #$FF
-    ldy #$F6
+    ldy #$EC
     sty $6
     sta $7
 finished_proj_dir:
@@ -269,3 +269,11 @@ check_collision_with_player:
 damage_player:
     dec $880D
     rts
+what_side_of_player_am_i_on:
+; carry means you are on the right of the player
+    jsr get_entity_pos
+    lda $8803
+    sta $4
+    lda $8804
+    sta $5
+    jmp cmp_sixteen

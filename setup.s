@@ -51,5 +51,13 @@ start:
     ldx #$0
     jsr entity_init
     jsr player_init
+    lda #$1
+    ldy #$80
+    sty $2
+    sta $3
+    ldy #$0
+    sty $4
+    sta $5
+    jsr chaser_init
     jsr return_to_entity_base
     jmp frame_loop_start

@@ -27,3 +27,5 @@ dcb $00 $00 $00 $00 $0B
 dcb $00 $00 $00 $00 $0C
 ;exit sprite $E28
 dcb $00 $00 $00 $00 $0D
+;chaser animation $E2D
+dcb $02 $00 $02 $02 $0E

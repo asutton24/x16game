@@ -48,11 +48,9 @@ copy_proj_vel_to_r0:
     ldy #$1
     lda ($7E),y
     jsr turn_on_sprite
-    lda #$B
-    jsr ptr_add
     ldy #$77
     lda #$22
-    jsr ptr_set_at
+    jsr set_hitbox
     jmp set_ptr_from_stk
 update_projectile:
     jsr out_of_bounds
@@ -113,12 +111,9 @@ level_exit_init:
     jsr load_anim
     jsr get_entity_sprite_index
     jsr turn_on_sprite
-    ldy #$B
-    lda #$61
-    sta ($7E),y
-    iny
+    ldy #$61
     lda #$4E
-    sta ($7E),y
+    jsr set_hitbox
     rts
 level_exit_update:
     jsr check_collision_with_player
@@ -128,6 +123,7 @@ level_exit_update:
 level_not_over:
     rts
 spike_init:
+; pos in r0-r1
     lda #$5
     jsr enemy_init_starter
     ldx #$E
@@ -135,12 +131,9 @@ spike_init:
     jsr load_anim
     jsr get_entity_sprite_index
     jsr turn_on_sprite
-    ldy #$B
-    lda #$11
-    sta ($7E),y
-    iny
+    ldy #$11
     lda #$EE
-    sta ($7E),y
+    jsr set_hitbox
     rts
 spike_update:
     jsr check_collision_with_player
@@ -148,6 +141,53 @@ spike_update:
     jsr damage_player
     jsr destroy_entity
 spike_not_touching_player:
+    rts
+chaser_init:
+;pos in r0-r1
+    lda #$6
+    jsr enemy_init_starter
+    ldx #$E
+    ldy #$2D
+    jsr load_anim
+    jsr get_entity_sprite_index
+    jsr turn_on_sprite
+    ldy #$42
+    lda #$8D
+    jsr set_hitbox
+    rts
+chaser_update:
+    jsr apply_gravity
+    jsr check_collision_with_player
+    bcc chaser_not_touching_player
+    jsr damage_player
+chaser_fell:
+    jmp destroy_entity
+chaser_not_touching_player:
+    jsr out_of_bounds
+    bcs chaser_fell
+    lda $3E
+    and #$F
+    bne dont_realign_chaser
+    jsr what_side_of_player_am_i_on
+    bcc set_chaser_positive_vel
+    jsr get_entity_vel
+    ldy #$F8
+    lda #$FF
+    sty $2
+    sta $3
+    jsr set_entity_vel
+    jsr get_entity_sprite_index
+    jmp face_left
+set_chaser_positive_vel:
+    jsr get_entity_vel
+    ldy #$9
+    lda #$0
+    sty $2
+    sta $3
+    jsr set_entity_vel
+    jsr get_entity_sprite_index
+    jmp face_right
+dont_realign_chaser:
     rts
 
 

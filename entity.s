@@ -68,11 +68,14 @@ get_entity_pos:
     lda #$3
 skip_get_pos_indexing:
     jsr ptr_add
-    ldx #$0
-    jsr transfer_ptr_to_reg
+    jsr fetch_ptr
+    sty $2
+    sta $3
     jsr ptr_double_inc
-    ldx #$1
-    jmp transfer_ptr_to_reg
+    jsr fetch_ptr
+    sty $4
+    sta $5
+    rts
 set_entity_vel:
     jsr return_to_entity_base
     lda #$7
@@ -82,15 +85,28 @@ set_entity_pos:
     lda #$3
 skip_set_pos_indexing:
     jsr ptr_add
-    ldx #$0
-    jsr transfer_reg_to_ptr
+    ldy $2
+    lda $3
+    jsr ptr_set_at
     jsr ptr_double_inc
-    ldx #$1
-    jmp transfer_reg_to_ptr
+    ldy $4
+    lda $5
+    jmp ptr_set_at
 get_entity_sprite_index:
     jsr return_to_entity_base
     ldy #$1
     lda ($7E),y
+    rts
+set_hitbox:
+;offset in y, box dimensions in a
+    pha
+    jsr return_to_entity_base
+    tya
+    ldy #$B
+    sta ($7E),y
+    pla
+    iny
+    sta ($7E),y
     rts
 out_of_bounds:
     jsr get_entity_pos
@@ -106,14 +122,6 @@ out_of_bounds:
     inc $3F
     inc $3F
     rts
-damage_entity:
-    jsr return_to_entity_base
-    ldy #$D
-    lda ($7E),y
-    sec
-    sbc #$1
-    sta ($7E),y
-    rts
 check_y_bounds:
     jsr direct_pop
     sty $2
@@ -123,6 +131,14 @@ check_y_bounds:
     sty $4
     sta $5
     jsr cmp_sixteen
+    rts
+damage_entity:
+    jsr return_to_entity_base
+    ldy #$D
+    lda ($7E),y
+    sec
+    sbc #$1
+    sta ($7E),y
     rts
 entity_init:
 ; entity type in a, number in x
@@ -156,11 +172,6 @@ pos_vel_zero_loop:
     bne pos_vel_zero_loop
     rts
 apply_gravity:
-    lda $3E
-    and #$3
-    beq valid_gravity_frame
-    rts
-valid_gravity_frame:
     jsr get_entity_vel
     ldx #$0
     jsr reg_push
@@ -607,6 +618,10 @@ not_level_exit:
     bne not_spike
     jmp spike_update
 not_spike:
+    cmp #$6
+    bne not_chaser
+    jmp chaser_update
+not_chaser:
     rts
 
 

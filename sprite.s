@@ -65,10 +65,8 @@ align_vera_to_attributes:
     ldx #$3
     jsr shift_left
     lda #$FC
-    ldy #$0
-    sty $4
-    sta $5
-    jsr add_sixteen
+    adc $3
+    sta $3
     lda $2
     sta $9F20
     lda $3
@@ -121,7 +119,8 @@ sprite_init_zero_loop:
 turn_off_sprite:
     jsr align_vera_to_attributes
     lda #$6
-    jsr add_to_vera
+    ora $9F20
+    sta $9F20
     lda $9F22
     and #$F
     sta $9F22
@@ -137,7 +136,8 @@ turn_on_sprite:
 face_right:
     jsr align_vera_to_attributes
     lda #$6
-    jsr add_to_vera
+    ora $9F20
+    sta $9F20
     lda #$1
     sta $9F22
     lda #$FE
@@ -147,7 +147,8 @@ face_right:
 face_left:
     jsr align_vera_to_attributes
     lda #$6
-    jsr add_to_vera
+    ora $9F20
+    sta $9F20
     lda #$1
     sta $9F22
     ora $9F23
@@ -166,8 +167,8 @@ set_sprite_pos:
     sta $B
     pla
     jsr align_vera_to_attributes
-    lda #$2
-    jsr add_to_vera
+    lda $9F23
+    lda $9F23
     lda $8
     sta $9F23
     lda $9
