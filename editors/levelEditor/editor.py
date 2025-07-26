@@ -1,7 +1,13 @@
 import pygame
-from sprite import Text
+from sprite import Text, Sprite
 
 color_list = [((0, 0, 0), 0), ((255, 255, 255), 1)]
+
+#entity definitions in ref.txt [type, param1, param2]
+
+entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0]]
+
+index_to_frame = {1:1, 4:13, 5:12, 6:14}
 
 def is_rectangle_redundant(index, rects):
     point_in_rectangle = lambda rt, x, y : (rt[2][0] <= x <= rt[2][0] + rt[2][2]) and (rt[2][1] <= y <= rt[2][1] + rt[2][3])
@@ -24,6 +30,7 @@ class Editor:
         self.cur_border = 0
         self.snap_to = 1
         self.file_id = num
+        self.cur_enemy = 0
     
     def add_rectangle(self, x1, y1, x2, y2):
         x1 = x1 // self.snap_to * self.snap_to
@@ -46,6 +53,27 @@ class Editor:
         for i in indices_to_remove:
             del self.rectangles[i]
 
+    def add_enemy(self, x, y):
+        x = x // self.snap_to * self.snap_to
+        y = y // self.snap_to * self.snap_to
+        if entity_ref[self.cur_enemy][0] == 1 or entity_ref[self.cur_enemy][0] == 4:
+            for i in range(len(self.enemies)):
+                if self.enemies[i][0] == entity_ref[self.cur_enemy][0]:
+                    self.enemies[i][1] = x
+                    self.enemies[i][2] = y
+                    return
+        self.enemies.append([entity_ref[self.cur_enemy][0], x, y, entity_ref[self.cur_enemy][1], entity_ref[self.cur_enemy][2]])
+    
+    def remove_enemy(self, x, y):
+        tracker = 0
+        indices_to_remove = []
+        for e in self.enemies:
+            if 0 <= x - e[1] <= 15 and 0 <= y - e[2] <= 15: indices_to_remove.append(tracker)
+            tracker += 1
+        indices_to_remove.reverse()
+        for i in indices_to_remove:
+            del self.enemies[i]
+            
     def save_to_file(self):
         if self.file_id == -1:
             return -1
@@ -56,6 +84,8 @@ class Editor:
         solid_colliders = []
         enemies = []
         extras = []
+        player_pos = []
+        exit_pos = []
         counter = 0
         redundant = False
         for r in self.rectangles:
@@ -72,13 +102,20 @@ class Editor:
         playfield = [len(playfield) // 9] + [0] + playfield
         solid_colliders = [len(solid_colliders) // 8] + solid_colliders
         for e in self.enemies:
-            enemies.append(e[0])
-            for i in range(4):
-                enemies += int_16(e[i + 1])
+            if e[0] == 1:
+                player_pos = int_to_fixed(e[1]) + int_to_fixed(e[2])
+            elif e[0] == 4:
+                exit_pos = int_to_fixed(e[1]) + int_to_fixed(e[2])
+            else:
+                enemies.append(e[0])
+                for i in range(4):
+                    if (i < 2): enemies += int_to_fixed(e[i + 1])
+                    else: enemies += int_16(e[i + 1])
         enemies = [len(enemies) // 9] + enemies
         if playfield == []: playfield = [0]
         if solid_colliders == []: solid_colliders = [0]
-        if enemies == []: enemies = [0] 
+        if enemies == []: enemies = [0]
+        extras = player_pos + exit_pos 
         if extras == []: extras = [0]
         header[0] = 8
         header[2] = (len(playfield) + 8) % 256
@@ -87,6 +124,7 @@ class Editor:
         header[5] = (len(solid_colliders) + len(playfield) + 8) // 256
         header[6] = (len(solid_colliders) + len(playfield) + len(enemies) + 8) % 256
         header[7] = (len(solid_colliders) + len(playfield) + len(enemies) + 8) // 256
+        print(header + playfield + solid_colliders + enemies + extras)
         full_file = bytes(header + playfield + solid_colliders + enemies + extras)
         if len(full_file) > 2048: return -1
         with open("LVL{}.BIN".format(hex(self.file_id)[2:].zfill(2)).upper(), "wb") as file:
@@ -110,6 +148,12 @@ def draw_from_editor(edit, screen):
         pygame.draw.rect(screen, color_list[r[0]][0], [2 * r[2][0], 2 * r[2][1], 2 * r[2][2], 2 * r[2][3]])
         if (r[1] > 0 and r[2][2] - 2 * r[1] > 0 and r[2][3] - 2 * r[1] > 0):
             pygame.draw.rect(screen, (0, 0, 0), [2 * (r[2][0] + r[1]), 2 * (r[2][1] + r[1]), 2 * (r[2][2] - 2 * r[1]), 2 * (r[2][3] - 2 * r[1])])
+    drawSpr = Sprite("spritesheet.spr", 0, 0, (255, 255, 255), -1, 2, screen)
+    for e in edit.enemies:
+        drawSpr.updateFrame(index_to_frame[e[0]])
+        drawSpr.updatePos(e[1] * 2, e[2] * 2)
+        drawSpr.update()
+
     
 
 
@@ -121,6 +165,7 @@ def main():
     running = True
     active_points = []
     edit_mode = "playfield"
+    appending_to_level = False
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -135,27 +180,55 @@ def main():
                     elif event.button == 3:
                         edit.remove_rectangle(event.pos[0] // 2, event.pos[1] // 2)
                         active_points = []
+                elif event.pos[1] < 480 and edit_mode == "enemies":
+                    if event.button == 1: edit.add_enemy(event.pos[0] // 2, event.pos[1] // 2)
+                    elif event.button == 3: edit.remove_enemy(event.pos[0] // 2, event.pos[1] // 2)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
                     edit.save_to_file()
-                elif event.key == pygame.K_LEFT:
-                    edit.cur_color = (edit.cur_color + 1) % len(color_list)
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_LEFT and edit_mode == "playfield":
                     edit.cur_color = (edit.cur_color - 1) % len(color_list)
-                elif event.key == pygame.K_UP and edit.cur_border < 256:
+                elif event.key == pygame.K_LEFT and edit_mode == "enemies":
+                    edit.cur_enemy = (edit.cur_enemy - 1) % len(entity_ref)
+                elif event.key == pygame.K_RIGHT and edit_mode == "playfield":
+                    edit.cur_color = (edit.cur_color + 1) % len(color_list)
+                elif event.key == pygame.K_RIGHT and edit_mode == "enemies":
+                    edit.cur_enemy = (edit.cur_enemy + 1) % len(entity_ref)
+                elif event.key == pygame.K_UP and edit.cur_border < 256 and edit_mode == "playfield":
                     edit.cur_border += 1
-                elif event.key == pygame.K_DOWN and edit.cur_border > 0:
+                elif event.key == pygame.K_DOWN and edit.cur_border > 0 and edit_mode == "playfield":
                     edit.cur_border -= 1
                 elif event.key == pygame.K_EQUALS and edit.snap_to < 16:
                     edit.snap_to *= 2
                 elif event.key == pygame.K_MINUS and edit.snap_to > 1:
                     edit.snap_to //= 2
+                elif event.key == pygame.K_SPACE:
+                    if edit_mode == "playfield": edit_mode = "enemies"
+                    else: edit_mode = "playfield"
+                elif pygame.K_0 <= event.key <= pygame.K_9:
+                    if not appending_to_level:
+                        edit.file_id = event.key - pygame.K_0
+                        appending_to_level = True
+                    else:
+                        new_file = edit.file_id * 10 + event.key - pygame.K_0
+                        if new_file < 256:
+                            edit.file_id = new_file
+                            if new_file > 26: appending_to_level = False
+                elif event.key == pygame.K_RETURN:
+                    appending_to_level = False
         draw_from_editor(edit, screen)
         if edit_mode == "playfield":
             t = Text("Color-", 20, 500, (255, 255, 255), 2, screen)
             t.update()
-            t = Text("Level-", 20, 540, (255, 255, 255), 2, screen)
+            pygame.draw.rect(screen, color_list[edit.cur_color][0], [130, 500, 16, 16])
+        elif edit_mode == "enemies":
+            t = Text("Enemy-", 20, 500, (255, 255, 255), 2, screen)
             t.update()
+            s = Sprite("spritesheet.spr", 130, 500, (255, 255, 255), -1, 1, screen)
+            s.updateFrame(index_to_frame[entity_ref[edit.cur_enemy][0]])
+            s.update()
+        t = Text("Level- {}".format(edit.file_id), 20, 540, (255, 255, 255), 2, screen)
+        t.update()
         pygame.display.update()
     pygame.quit()
 

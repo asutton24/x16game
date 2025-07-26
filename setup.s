@@ -40,24 +40,15 @@ start:
     ldx #$0
     jsr load_level_into_ram
     lda #$0
-    jsr set_level_base
-    jsr draw_playfield
-    jsr swap_ptrs
-    lda #$0
     ldx #$0
     jsr load_sprite_sheet
     jsr ram_init
     lda #$1
     ldx #$0
     jsr entity_init
+    lda #$0
+    jsr full_level_load
+    lda #$0
+    jsr set_entity_base
     jsr player_init
-    lda #$1
-    ldy #$80
-    sty $2
-    sta $3
-    ldy #$0
-    sty $4
-    sta $5
-    jsr chaser_init
-    jsr return_to_entity_base
     jmp frame_loop_start

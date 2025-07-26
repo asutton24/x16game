@@ -249,6 +249,7 @@ player_init:
     tax
     lda #$1
     jsr assign_data_to_sprite
+    jsr update_sprite_pos
     pla
     jsr turn_on_sprite
     rts

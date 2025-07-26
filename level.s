@@ -16,7 +16,7 @@ full_level_load:
     pla
     adc $7F
     sta $7F
-    ldx #$0
+    lda #$0
 pull_extras:
     pha
     jsr transfer_ptr_to_reg
@@ -121,6 +121,7 @@ load_enemies:
     pla
     adc $7F
     sta $7F
+    ldy #$0
     lda ($7E),y
     beq end_playfield_draw_loop
     pha
@@ -146,6 +147,10 @@ keep_loading_regs:
     bne not_spike_init
     jsr spike_init
 not_spike_init:
+    cmp #$6
+    bne not_chaser_init
+    jsr chaser_init
+not_chaser_init:
     jsr swap_ptrs
     pla
     sec

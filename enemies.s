@@ -20,7 +20,8 @@ enemy_init_starter:
     pla
     jsr entity_init
     jsr restore_position
-    jmp set_entity_pos
+    jsr set_entity_pos
+    jsr update_sprite_pos
 create_projectile:
 ;0 for player projectile 1 for enemy, pos and vel in r0 - r3
     pha
@@ -106,7 +107,7 @@ not_valid_enemy:
 level_exit_init:
     lda #$4
     jsr enemy_init_starter
-    ldx #$3
+    ldx #$E
     ldy #$28
     jsr load_anim
     jsr get_entity_sprite_index
