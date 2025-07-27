@@ -21,7 +21,39 @@ enemy_init_starter:
     jsr entity_init
     jsr restore_position
     jsr set_entity_pos
-    jsr update_sprite_pos
+    jsr return_to_entity_base
+    lda #$0
+    ldy #$D
+    sta ($7E),y
+    jmp update_sprite_pos
+check_enemy_death:
+    jsr return_to_entity_base
+    ldy #$D
+    lda ($7E),y
+    bpl enemy_alive
+    jsr destroy_entity
+    sec
+    rts
+enemy_alive:
+    clc
+    rts
+nuke_enemies:
+    ldy #$20
+    lda #$88
+    sta $7F
+    sty $7E
+keep_destroying_enemies:
+    ldy #$0
+    lda ($7E),y
+    cmp #$4
+    beq dont_destroy_exit
+    jsr destroy_entity
+dont_destroy_exit:
+    jsr goto_next_entity
+    lda #$8C
+    cmp $7F
+    bne keep_destroying_enemies
+    rts
 create_projectile:
 ;0 for player projectile 1 for enemy, pos and vel in r0 - r3
     pha
@@ -157,6 +189,10 @@ chaser_init:
     jsr set_hitbox
     rts
 chaser_update:
+    jsr check_enemy_death
+    bcc chaser_alive
+    rts
+chaser_alive:
     jsr apply_gravity
     jsr check_collision_with_player
     bcc chaser_not_touching_player

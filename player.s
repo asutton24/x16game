@@ -243,6 +243,8 @@ player_init:
     sta ($7E),y
     dey
     sta ($7E),y
+    ldy #$D
+    sta ($7E),y
     ldy #$1
     lda ($7E),y
     pha
@@ -278,3 +280,33 @@ what_side_of_player_am_i_on:
     lda $8804
     sta $5
     jmp cmp_sixteen
+return_to_player_start:
+    jsr return_to_level_base
+    ldy #$7
+    lda ($7E),y
+    pha
+    dey
+    lda ($7E),y
+    clc
+    adc $7E
+    sta $7E
+    pla
+    adc $7F
+    sta $7F
+    ldx #$3
+    ldy #$3
+pos_restore_loop:
+    lda ($7E),y
+    sta $8803,x
+    dey
+    dex
+    bpl pos_restore_loop
+    ldx #$3
+    lda #$0
+player_vel_zero_loop:
+    sta $8807,x
+    dex
+    bpl player_vel_zero_loop
+    lda #$0
+    sta $880D
+    rts

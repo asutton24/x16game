@@ -26,6 +26,8 @@ update_entity_loop:
     adc #$1
     cmp #$20
     bne update_entity_loop
+    lda $880D
+    bmi player_death_reset
     jsr randbyte
 wait_for_frame_close:
     jsr RDTIM
@@ -33,5 +35,20 @@ wait_for_frame_close:
     cmp $3A
     beq wait_for_frame_close
     jmp frame_loop
-
-
+player_death_reset:
+    lda $8801
+    pha
+    jsr turn_off_sprite
+    jsr nuke_enemies
+    jsr swap_ptrs
+    jsr load_enemies
+    jsr return_to_player_start
+    jsr swap_ptrs
+    lda #$88
+    ldy #$0
+    sty $7E
+    sta $7F
+    jsr update_sprite_pos
+    pla
+    jsr turn_on_sprite
+    jmp frame_loop_start
