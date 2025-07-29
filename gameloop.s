@@ -28,6 +28,9 @@ update_entity_loop:
     bne update_entity_loop
     lda $880D
     bmi player_death_reset
+    lda $36
+    cmp #$1
+    beq level_complete_reset
     jsr randbyte
 wait_for_frame_close:
     jsr RDTIM
@@ -51,4 +54,23 @@ player_death_reset:
     jsr update_sprite_pos
     pla
     jsr turn_on_sprite
+    jmp frame_loop_start
+level_complete_reset:
+    lda $8801
+    pha
+    jsr turn_off_sprite
+    jsr nuke_everything
+    jsr swap_ptrs
+    inc $35
+    lda $35
+    jsr full_level_load
+    lda #$88
+    ldy #$0
+    sty $7E
+    sta $7F
+    jsr update_sprite_pos
+    pla
+    jsr turn_on_sprite
+    lda #$0
+    sta $36
     jmp frame_loop_start

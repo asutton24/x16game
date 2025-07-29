@@ -54,6 +54,18 @@ dont_destroy_exit:
     cmp $7F
     bne keep_destroying_enemies
     rts
+nuke_everything:
+    ldy #$20
+    lda #$88
+    sta $7F
+    sty $7E
+keep_destroying_everything:
+    jsr destroy_entity
+    jsr goto_next_entity
+    lda #$8C
+    cmp $7F
+    bne keep_destroying_everything
+    rts
 create_projectile:
 ;0 for player projectile 1 for enemy, pos and vel in r0 - r3
     pha

@@ -48,6 +48,25 @@ valid_high_nibble:
     txa
     jsr LOAD
     rts
+load_level_range:
+;a holds destination, x holds file id, y holds number of levels
+    pha
+    txa
+    pha
+    tya
+    pha
+    jsr load_level_into_ram
+    pla
+    tay
+    pla
+    tax
+    pla
+    inx
+    clc
+    adc #$1
+    dey
+    bne load_level_range
+    rts
 load_sprite_sheet:
 ; A holds which sheet to load SPRX.BIN, x holds offset
     and #$F

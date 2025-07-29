@@ -37,7 +37,11 @@ start:
     jsr GRAPH_set_colors
     jsr GRAPH_clear
     lda #$0
-    ldx #$0
+    sta $35
+    tax
+    jsr load_level_into_ram
+    lda #$1
+    tax
     jsr load_level_into_ram
     lda #$0
     ldx #$0
