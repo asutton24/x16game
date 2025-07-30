@@ -145,9 +145,9 @@ class Editor:
         header[5] = (len(solid_colliders) + len(playfield) + 8) // 256
         header[6] = (len(solid_colliders) + len(playfield) + len(enemies) + 8) % 256
         header[7] = (len(solid_colliders) + len(playfield) + len(enemies) + 8) // 256
-        print(header + playfield + solid_colliders + enemies + extras)
+        #print(header + playfield + solid_colliders + enemies + extras)
         full_file = bytes(header + playfield + solid_colliders + enemies + extras)
-        if len(full_file) > 2048: return -1
+        if len(full_file) > 1024: return -1
         with open("LVL{}.BIN".format(hex(self.file_id)[2:].zfill(2)).upper(), "wb") as file:
             file.write(full_file)
             file.close()

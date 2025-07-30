@@ -67,4 +67,5 @@ start:
     sta $8
     sta $9
     jsr drone_init
+    jmp $FECC
     jmp frame_loop_start

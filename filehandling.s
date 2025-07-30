@@ -32,14 +32,14 @@ valid_high_nibble:
     jsr SETNAM
     pla
     pha
-    and #$3
-    asl
+    and #$7
     asl
     asl
     ora #$A0
     tay
     ldx #$0
     pla
+    lsr
     lsr
     lsr
     clc
