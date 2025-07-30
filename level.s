@@ -146,11 +146,18 @@ keep_loading_regs:
     cmp #$5
     bne not_spike_init
     jsr spike_init
+    jmp done_init
 not_spike_init:
     cmp #$6
     bne not_chaser_init
     jsr chaser_init
+    jmp done_init
 not_chaser_init:
+    cmp #$7
+    bne not_drone_init
+    jsr drone_init
+not_drone_init:
+done_init:
     jsr swap_ptrs
     pla
     sec

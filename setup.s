@@ -55,4 +55,16 @@ start:
     lda #$0
     jsr set_entity_base
     jsr player_init
+    lda #$0
+    ldx #$1
+    sta $2
+    stx $3
+    sta $4
+    stx $5
+    ldx #$1E
+    stx $6
+    sta $7
+    sta $8
+    sta $9
+    jsr drone_init
     jmp frame_loop_start

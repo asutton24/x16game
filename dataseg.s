@@ -29,3 +29,5 @@ dcb $00 $00 $00 $00 $0C
 dcb $00 $00 $00 $00 $0D
 ;chaser animation $E2D
 dcb $02 $00 $02 $02 $0E
+;drone animation $E32
+dcb $01 $00 $02 $01 $10

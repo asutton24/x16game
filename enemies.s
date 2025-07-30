@@ -184,7 +184,7 @@ spike_update:
     jsr check_collision_with_player
     bcc spike_not_touching_player
     jsr damage_player
-    jsr destroy_entity
+    jmp destroy_entity
 spike_not_touching_player:
     rts
 chaser_init:
@@ -198,8 +198,7 @@ chaser_init:
     jsr turn_on_sprite
     ldy #$42
     lda #$8D
-    jsr set_hitbox
-    rts
+    jmp set_hitbox
 chaser_update:
     jsr check_enemy_death
     bcc chaser_alive
@@ -237,6 +236,76 @@ set_chaser_positive_vel:
     jsr get_entity_sprite_index
     jmp face_right
 dont_realign_chaser:
+    rts
+drone_init:
+; param 1 holds how many frames the drone will travel (low byte only), param 2: 0000 for right 0100 for down 0001 for left 0101 for up
+    lda #$7
+    jsr enemy_init_starter
+    jsr return_to_entity_base
+    ldy #$2
+    lda #$FF
+    sta ($7E),y
+    ldy #$D
+    lda #$9
+    sta ($7E),y
+    lda $6
+    ldy #$13
+    sta ($7E),y
+    iny
+    sta ($7E),y
+    ldy #$7
+    lda $9
+    beq horizontal_drone
+    iny
+    iny
+horizontal_drone:
+    lda $8
+    beq drone_pos_vel
+    lda #$F9
+    sta ($7E),y
+    iny
+    lda #$FF
+    sta ($7E),y 
+    bmi drone_vel_set
+drone_pos_vel:
+    lda #$7
+    sta ($7E),y
+    iny
+    lda #$0
+    sta ($7E),y 
+drone_vel_set:
+    ldx #$E
+    ldy #$32
+    jsr load_anim
+    jsr get_entity_sprite_index
+    jsr turn_on_sprite
+    ldy #$46
+    lda #$86
+    jmp set_hitbox
+drone_update:
+    jsr return_to_entity_base
+    ldy #$13
+    lda ($7E),y
+    sec
+    sbc #$1
+    bne drone_same_dir
+    jsr get_entity_vel
+    ldx #$0
+    jsr reg_negate
+    ldx #$1
+    jsr reg_negate
+    jsr set_entity_vel
+    jsr return_to_entity_base
+    ldy #$14
+    lda ($7E),y
+    dey
+drone_same_dir:
+    sta ($7E),y
+    jsr check_collision_with_player
+    bcc drone_not_touching_player
+    jsr damage_player
+    jmp destroy_entity
+drone_not_touching_player:
     rts
 
 

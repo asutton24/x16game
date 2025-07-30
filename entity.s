@@ -516,6 +516,7 @@ skip_colliders:
     jsr swap_ptrs
     inc $3F
     inc $3F
+auto_skip_colliders:
     jsr apply_x_velocity
     jsr apply_y_velocity
     jsr reset_collision_byte
@@ -529,6 +530,10 @@ entity_update:
     rts
 is_valid_entity:
     pha
+    ldy #$2
+    lda ($7E),y
+    cmp #$FF
+    beq auto_skip_colliders
     ldx #$4
     ldy #$7
 zero_vel_loop:
@@ -622,6 +627,10 @@ not_spike:
     bne not_chaser
     jmp chaser_update
 not_chaser:
+    cmp #$7
+    bne not_drone
+    jmp drone_update
+not_drone:
     rts
 
 
