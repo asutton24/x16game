@@ -7,7 +7,7 @@ color_list = [((0, 0, 0), 0), ((255, 255, 255), 1)]
 
 entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0]]
 
-index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:17}
+index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16}
 
 def is_rectangle_redundant(index, rects):
     point_in_rectangle = lambda rt, x, y : (rt[2][0] <= x <= rt[2][0] + rt[2][2]) and (rt[2][1] <= y <= rt[2][1] + rt[2][3])
@@ -68,13 +68,13 @@ class Editor:
         if entity_ref[self.cur_enemy][0] == 7:
             newX = -1
             newY = -1
-            while newX != x or newY != y:
+            while newX != x and newY != y:
                 newX, newY = query("position", None, self)
                 newX = newX // self.snap_to * self.snap_to
                 newY = newY // self.snap_to * self.snap_to
             direction = 0
             lifetime = 0
-            if y == newY:
+            if x == newX:
                 direction += 256
                 lifetime = round(abs(newY - y) / 1.75)
                 if newY - y < 0: direction += 1
@@ -82,7 +82,7 @@ class Editor:
                 lifetime = round(abs(newX - x) / 1.75)
                 if newX - x < 0: direction += 1
             self.enemies.append([7, x, y, lifetime, direction])
-            
+            return
         self.enemies.append([entity_ref[self.cur_enemy][0], x, y, entity_ref[self.cur_enemy][1], entity_ref[self.cur_enemy][2]])
     
     def remove_enemy(self, x, y):
@@ -188,14 +188,15 @@ def draw_from_editor(edit):
     
 def query(type, prompt, edit):
     if type == None: return None
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            return -1
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.pos[1] < 480 and type == "position":
-                return [event.pos[0] // 2, event.pos[1] // 2]
-    draw_from_editor(edit)
-    pygame.display.update()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return -1
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.pos[1] < 480 and type == "position":
+                    return [event.pos[0] // 2, event.pos[1] // 2]
+        draw_from_editor(edit)
+        pygame.display.update()
 
 
 
@@ -227,6 +228,9 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
                     edit.save_to_file()
+                elif event.key == pygame.K_r:
+                    edit.rectangles = []
+                    edit.enemies = []
                 elif event.key == pygame.K_LEFT and edit.edit_mode == "playfield":
                     edit.cur_color = (edit.cur_color - 1) % len(color_list)
                 elif event.key == pygame.K_LEFT and edit.edit_mode == "enemies":

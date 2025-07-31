@@ -50,17 +50,13 @@ valid_high_nibble:
     rts
 load_level_range:
 ;a holds destination, x holds file id, y holds number of levels
-    pha
-    txa
-    pha
-    tya
-    pha
+    sta $60
+    stx $61
+    sty $62
     jsr load_level_into_ram
-    pla
-    tay
-    pla
-    tax
-    pla
+    lda $60
+    ldx $61
+    ldy $62
     inx
     clc
     adc #$1

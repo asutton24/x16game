@@ -39,10 +39,8 @@ start:
     lda #$0
     sta $35
     tax
-    jsr load_level_into_ram
-    lda #$1
-    tax
-    jsr load_level_into_ram
+    ldy #$4
+    jsr load_level_range
     lda #$0
     ldx #$0
     jsr load_sprite_sheet
@@ -55,17 +53,4 @@ start:
     lda #$0
     jsr set_entity_base
     jsr player_init
-    lda #$0
-    ldx #$1
-    sta $2
-    stx $3
-    sta $4
-    stx $5
-    ldx #$1E
-    stx $6
-    sta $7
-    sta $8
-    sta $9
-    jsr drone_init
-    jmp $FECC
     jmp frame_loop_start

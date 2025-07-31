@@ -224,6 +224,14 @@ finished_proj_dir:
     sta $9
     jsr create_projectile
 skip_shooting_check:
+    jsr out_of_bounds
+    bcc player_in_bounds
+    jsr return_to_entity_base
+    clc
+    lda #$FF
+    ldy #$D
+    sta ($7E),y
+player_in_bounds:
     jsr update_player_sprite
     rts
 player_init:

@@ -63,7 +63,7 @@ return_to_level_base:
     lda #$0
     sta $7E
     lda $7F
-    and #$F4
+    and #$FC
     sta $7F
     rts
 draw_playfield:

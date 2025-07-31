@@ -5,6 +5,21 @@ stash_position:
     lda $5
     ldy $4
     jmp direct_push
+stash_params:
+    lda $7
+    ldy $6
+    jsr direct_push
+    lda $9
+    ldy $8
+    jmp direct_push
+restore_params:
+    jsr direct_pop
+    sty $8
+    sta $9
+    jsr direct_pop
+    sty $6
+    sta $7
+    rts
 restore_position:
     jsr direct_pop
     sty $4
@@ -15,6 +30,7 @@ restore_position:
     rts
 enemy_init_starter:
     pha
+    jsr stash_params
     jsr stash_position
     jsr find_empty_entity
     pla
@@ -25,7 +41,8 @@ enemy_init_starter:
     lda #$0
     ldy #$D
     sta ($7E),y
-    jmp update_sprite_pos
+    jsr update_sprite_pos
+    jmp restore_params
 check_enemy_death:
     jsr return_to_entity_base
     ldy #$D
@@ -283,6 +300,10 @@ drone_vel_set:
     lda #$86
     jmp set_hitbox
 drone_update:
+    jsr check_enemy_death
+    bcc drone_still_alive
+    rts
+drone_still_alive:
     jsr return_to_entity_base
     ldy #$13
     lda ($7E),y
