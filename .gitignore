@@ -1,2 +1,3 @@
 assemble
-run.sh
+*.sh
+a.bin
