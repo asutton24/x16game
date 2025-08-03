@@ -13,6 +13,7 @@ clock_tick:
     beq second_complete
     sta $38
     cld
+    clc
     rts
 second_complete:
     lda #$30

@@ -77,6 +77,41 @@ text_color_loop:
     cmp #$CE
     bne text_color_loop
     rts
-
+refresh_hud_data:
+    lda $37
+    and #$F
+    ora #$30
+    sta $917
+    lda $39
+    and #$F
+    ora #$30
+    sta $91E
+    rts
+draw_hud:
+    jsr refresh_hud_data
+    lda #$9
+    sta $3
+    lda #$11
+    sta $2
+    ldx #$3
+    ldy #$1
+    jsr print_at
+    lda #$19
+    sta $2
+    ldx #$1E
+    ldy #$1
+    jmp print_at
+update_hud_time:
+    lda $39
+    and #$F
+    ora #$30
+    sta $91E
+    lda #$9
+    sta $3
+    lda #$1E
+    sta $2
+    ldx #$23
+    ldy #$1
+    jmp print_at
 
 

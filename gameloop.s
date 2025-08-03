@@ -26,11 +26,14 @@ update_entity_loop:
     adc #$1
     cmp #$20
     bne update_entity_loop
+    jsr clock_tick
+    bcs player_death_reset
     lda $880D
     bmi player_death_reset
     lda $36
     cmp #$1
     beq level_complete_reset
+    jsr update_hud_time
     jsr randbyte
 wait_for_frame_close:
     jsr RDTIM
@@ -52,6 +55,8 @@ player_death_reset:
     sty $7E
     sta $7F
     jsr update_sprite_pos
+    lda #$9
+    jsr set_clock
     pla
     jsr turn_on_sprite
     jmp frame_loop_start
@@ -73,4 +78,6 @@ level_complete_reset:
     jsr turn_on_sprite
     lda #$0
     sta $36
+    lda #$9
+    jsr set_clock
     jmp frame_loop_start

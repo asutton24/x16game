@@ -45,13 +45,13 @@ pull_extras:
     rts
 set_level_base:
     tax
-    and #$7
-    asl
+    and #$F
     asl
     clc
     adc #$A0
     sta $7F
     txa
+    lsr
     lsr
     lsr
     lsr
@@ -63,7 +63,7 @@ return_to_level_base:
     lda #$0
     sta $7E
     lda $7F
-    and #$FC
+    and #$FE
     sta $7F
     rts
 draw_playfield:

@@ -36,6 +36,8 @@ start:
     tay
     jsr GRAPH_set_colors
     jsr GRAPH_clear
+    lda #$1
+    jsr set_text_color
     lda #$0
     sta $35
     tax
@@ -53,4 +55,7 @@ start:
     lda #$0
     jsr set_entity_base
     jsr player_init
+    lda #$9
+    jsr set_clock
+    jsr draw_hud
     jmp frame_loop_start
