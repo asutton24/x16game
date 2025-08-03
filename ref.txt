@@ -10,7 +10,7 @@ zpg map:
 $02-$21 r0-rf
 $35 current level
 $36 level status
-$37-$39 level clock
+$38-$39 level clock
 $3A real clock
 $3B-$3D rand byte info
 $3E frame clock

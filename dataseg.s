@@ -7,6 +7,8 @@ jmp start
 dcb $4C $56 $4C $30 $30 $2E $42 $49 $4E
 ;SPR0.BIN, $909, len = 8
 dcb $53 $50 $52 $30 $2E $42 $49 $4E
+;HELLO WORLD $911
+dcb $48 $45 $4C $4C $4F $20 $57 $4F $52 $4C $44 $00
 *= $E00
 ;animation segment
 ;idle player sprite $E00
