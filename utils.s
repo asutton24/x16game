@@ -449,3 +449,11 @@ str_keep_searching:
 found_str_end:
     tya
     rts
+mem_cpy:
+;r0 -> r1, len in y
+    dey
+    lda ($2),y
+    sta ($4),y
+    cpy #$0
+    bne mem_cpy
+    rts

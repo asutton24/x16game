@@ -19,6 +19,8 @@ second_complete:
     lda #$30
     sta $38
     lda $39
+    cmp #$99
+    beq timer_not_up
     sec
     sbc #$1
     sta $39

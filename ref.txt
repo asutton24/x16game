@@ -8,6 +8,7 @@ animation timer (E), current frame offset (F), number of frames (10), animation 
 
 zpg map:
 $02-$21 r0-rf
+$34 continue point
 $35 current level
 $36 level status
 $37 live counter
