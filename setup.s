@@ -25,6 +25,8 @@ sprite_attribute_init:
     jsr randinit
     rts
 start:
+    lda #$1F
+    sta $3F
     lda #$80
     jsr screen_mode
     lda #$0
@@ -36,8 +38,14 @@ start:
     tay
     jsr GRAPH_set_colors
     jsr GRAPH_clear
+    lda #$20
+    sta $2
+    lda #$9
+    sta $3
     lda #$1
     jsr set_text_color
+    lda #$2
+    jsr intermission
     lda #$0
     sta $35
     tax

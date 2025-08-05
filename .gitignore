@@ -1,3 +1,5 @@
 assemble
 *.sh
 a.bin
+__pycache__/
+*.pyc

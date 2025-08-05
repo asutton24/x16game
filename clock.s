@@ -27,4 +27,25 @@ second_complete:
     sec
 timer_not_up:
     cld
+wait_finished:
     rts
+clock_wait:
+    jsr set_clock
+    jsr RDTIM
+    and #$FE
+    sta $3A
+wait_for_clock_bottom:
+    jsr RDTIM
+    and #$FE
+    cmp $3A
+    beq wait_for_clock_bottom
+begin_tick:
+    sta $3A
+    jsr clock_tick
+    bcs wait_finished
+tick_not_complete:
+    jsr RDTIM
+    and #$FE
+    cmp $3A
+    beq tick_not_complete
+    bne begin_tick

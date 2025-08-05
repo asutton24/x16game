@@ -113,5 +113,37 @@ update_hud_time:
     ldx #$23
     ldy #$1
     jmp print_at
-
-
+update_hud_lives:
+    lda $37
+    and #$F
+    ora #$30
+    sta $917
+    lda #$9
+    sta $3
+    lda #$17
+    sta $2
+    ldx #$A
+    ldy #$1
+    jmp print_at
+intermission:
+    pha
+    ldx #$0
+    jsr reg_push
+    jsr GRAPH_clear
+    lda #$E
+    jsr clear_text_line
+    ldx #$0
+    jsr reg_pop
+    jsr str_len
+    lsr
+    sta $60
+    sec
+    lda #$13
+    sbc $60
+    tax
+    ldy #$E
+    jsr print_at
+    pla
+    jsr clock_wait
+    lda #$E
+    jmp clear_text_line

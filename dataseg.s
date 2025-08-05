@@ -11,6 +11,8 @@ dcb $53 $50 $52 $30 $2E $42 $49 $4E
 dcb $4C $49 $56 $45 $53 $20 $30 $0
 ;TIME 0, $919, len = 7
 dcb $54 $49 $4D $45 $20 $30 $0
+;PHASE 1, $920, len = 8
+dcb $50 $48 $41 $53 $45 $20 $31 $0
 *= $E00
 ;animation segment
 ;idle player sprite $E00

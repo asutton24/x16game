@@ -438,9 +438,14 @@ continue_waiting:
     cmp $60
     beq continue_waiting
     rts
-
-
-    
-
-
-
+str_len:
+;str ptr in r0
+    ldy #$0
+str_keep_searching:
+    lda ($2),y
+    beq found_str_end
+    iny
+    bne str_keep_searching
+found_str_end:
+    tya
+    rts
