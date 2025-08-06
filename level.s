@@ -67,7 +67,32 @@ return_to_level_base:
     sta $7F
     rts
 stage_starter:
-    rts
+    pha
+    ora #$30
+    sta $926
+    lda #$26
+    sta $2
+    lda #$9
+    sta $3
+    lda $8801
+    jsr turn_off_sprite
+    lda #$2
+    jsr intermission
+    pla
+    cmp #$1
+    bne not_stage_one
+    ldx #$0
+    ldy #$4
+not_stage_one:
+    lda #$0
+    jsr load_level_range
+    lda #$0
+    jsr full_level_load
+    lda $8801
+    jsr turn_on_sprite
+    lda #$9
+    jsr set_clock
+    jmp frame_loop_start
 draw_playfield:
 ;assumes level has been loaded
     jsr return_to_level_base
