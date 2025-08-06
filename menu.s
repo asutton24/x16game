@@ -1,4 +1,4 @@
-load_title:
+title_level:
     lda #$D2
     sta $2
     lda #$D
@@ -38,5 +38,25 @@ load_title:
     ldx #$2
     jsr print_at
 no_continue:
-    rts
-
+    lda #$99
+    jsr set_clock
+    lda #$FF
+    sta $35
+    jmp frame_loop_start
+title_out:
+    lda $8803
+    sta $2
+    lda $8804
+    sta $3
+    lda #$7C
+    sta $4
+    lda #$2
+    sta $5
+    jsr cmp_sixteen
+    bcc continue_stage
+    lda #$1
+    sta $34
+    jmp stage_starter
+continue_stage:
+     lda $34
+     jmp stage_starter

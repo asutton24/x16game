@@ -29,3 +29,5 @@ Entities:
 2/3: projectile
 4: level exit
 5: spike
+6: chaser
+7: drone

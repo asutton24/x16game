@@ -66,6 +66,8 @@ return_to_level_base:
     and #$FE
     sta $7F
     rts
+stage_starter:
+    rts
 draw_playfield:
 ;assumes level has been loaded
     jsr return_to_level_base

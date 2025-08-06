@@ -109,3 +109,28 @@ valid_sprite_nibble:
     lda #$3
     jsr LOAD
     rts
+load_stage:
+;load stage a at position 0
+    and #$F
+    ora #$30
+    cmp #$3A
+    bcs valid_stage_nibble
+    adc #$6
+valid_stage_nibble:
+    sta $93A
+    lda #$1
+    ldx #$8
+    ldy #$2
+    jsr SETLFS
+    lda #$8
+    ldx #$37
+    ldy #$9
+    jsr SETNAM
+    lda #$1
+    sta $0
+    lda #$0
+    sta $7E
+    jsr LOAD
+    lda #$A0
+    sta $7F
+    rts

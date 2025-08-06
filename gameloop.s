@@ -68,6 +68,9 @@ level_complete_reset:
     jsr swap_ptrs
     inc $35
     lda $35
+    bne not_level_file
+    jmp title_out
+not_level_file:
     jsr full_level_load
     lda #$88
     ldy #$0
