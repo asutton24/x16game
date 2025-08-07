@@ -49,6 +49,9 @@ no_continue:
     lda #$1
     sta $880D
     jsr clear_text_line
+    lda #$0
+    sta $7E
+    jsr update_sprite_pos
     lda $8801
     jsr turn_on_sprite
     jmp frame_loop_start
