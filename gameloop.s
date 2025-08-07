@@ -46,6 +46,12 @@ player_death_reset:
     pha
     jsr turn_off_sprite
     jsr nuke_enemies
+    dec $37
+    bne player_has_lives
+    jsr nuke_everything
+    jmp game_over
+player_has_lives:
+    jsr update_hud_lives
     jsr swap_ptrs
     jsr load_enemies
     jsr return_to_player_start

@@ -44,26 +44,13 @@ start:
     sta $3
     lda #$1
     jsr set_text_color
-    lda #$2
-    jsr intermission
     lda #$0
     sta $35
     tax
-    ldy #$4
-    jsr load_level_range
-    lda #$0
-    ldx #$0
     jsr load_sprite_sheet
     jsr ram_init
     lda #$1
     ldx #$0
     jsr entity_init
-    lda #$0
-    jsr full_level_load
-    lda #$0
-    jsr set_entity_base
     jsr player_init
-    lda #$9
-    jsr set_clock
-    jsr draw_hud
-    jmp frame_loop_start
+    jmp title_level

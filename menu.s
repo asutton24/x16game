@@ -1,4 +1,6 @@
 title_level:
+    lda #$FF
+    sta $37
     lda #$D2
     sta $2
     lda #$D
@@ -13,11 +15,11 @@ title_level:
     lda #$0
     jsr full_level_load
     lda #$9
-    sta $2
-    lda #$28
     sta $3
-    ldx #$1E
-    ldy #$10
+    lda #$28
+    sta $2
+    ldx #$20
+    ldy #$E
     jsr print_at
     lda $34
     cmp #$1
@@ -34,16 +36,25 @@ title_level:
     sta $2
     lda #$9
     sta $3
-    ldy #$10
-    ldx #$2
+    ldy #$E
+    ldx #$3
     jsr print_at
 no_continue:
     lda #$99
     jsr set_clock
     lda #$FF
     sta $35
+    lda #$0
+    sta $36
+    lda #$1
+    sta $880D
+    jsr clear_text_line
+    lda $8801
+    jsr turn_on_sprite
     jmp frame_loop_start
 title_out:
+    lda #$E
+    jsr clear_text_line
     lda $8803
     sta $2
     lda $8804
@@ -58,5 +69,13 @@ title_out:
     sta $34
     jmp stage_starter
 continue_stage:
-     lda $34
-     jmp stage_starter
+    lda $34
+    jmp stage_starter
+game_over:
+    lda #$3F
+    sta $2
+    lda #$9
+    sta $3
+    lda #$2
+    jsr intermission
+    jmp title_level 

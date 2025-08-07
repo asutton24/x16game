@@ -103,6 +103,10 @@ draw_hud:
     jmp print_at
 update_hud_time:
     lda $39
+    cmp #$99
+    bne timer_active
+    rts
+timer_active:
     and #$F
     ora #$30
     sta $91E
@@ -115,6 +119,10 @@ update_hud_time:
     jmp print_at
 update_hud_lives:
     lda $37
+    cmp #$FF
+    bne lives_active
+    rts
+lives_active:
     and #$F
     ora #$30
     sta $917
@@ -122,7 +130,7 @@ update_hud_lives:
     sta $3
     lda #$17
     sta $2
-    ldx #$A
+    ldx #$9
     ldy #$1
     jmp print_at
 intermission:

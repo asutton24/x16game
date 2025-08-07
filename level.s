@@ -68,14 +68,16 @@ return_to_level_base:
     rts
 stage_starter:
     pha
+    lda $8801
+    jsr turn_off_sprite
+    pla
+    pha
     ora #$30
     sta $926
-    lda #$26
+    lda #$20
     sta $2
     lda #$9
     sta $3
-    lda $8801
-    jsr turn_off_sprite
     lda #$2
     jsr intermission
     pla
@@ -92,6 +94,13 @@ not_stage_one:
     jsr turn_on_sprite
     lda #$9
     jsr set_clock
+    lda #$5
+    sta $37
+    lda #$0
+    sta $36
+    lda #$0
+    sta $880D
+    jsr draw_hud
     jmp frame_loop_start
 draw_playfield:
 ;assumes level has been loaded

@@ -20,6 +20,7 @@ second_complete:
     sta $38
     lda $39
     cmp #$99
+    clc
     beq timer_not_up
     sec
     sbc #$1

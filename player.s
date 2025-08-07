@@ -261,7 +261,6 @@ player_init:
     jsr assign_data_to_sprite
     jsr update_sprite_pos
     pla
-    jsr turn_on_sprite
     rts
 check_collision_with_player:
 ;entity 0 should ALWAYS be the player
