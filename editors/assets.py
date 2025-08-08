@@ -1,7 +1,7 @@
 import os
 
 def get_level_name(id):
-    return "LVL" + f"id:02X" + ".BIN"
+    return "LVL" + f"{id:02X}" + ".BIN"
 
 def pack_levels():
     digits = "0123456789ABCDEF"
@@ -22,9 +22,10 @@ def pack_levels():
 def unpack_levels():
     with open("Assetfile", "rb") as file:
         level_data = file.read(1)
-        while not level_data:
+        while level_data:
             level_id = int.from_bytes(level_data, "little")
             level_length = int.from_bytes(file.read(2), "little")
+            print(level_id, level_length)
             with open("Levels/" + get_level_name(level_id), "wb") as f:
                 f.write(file.read(level_length))
                 f.close()
@@ -34,8 +35,8 @@ def unpack_levels():
 def main():
     mode = "x"
     while mode not in "pu":
-        mode = input("(p)ack assets\n(u)npack assets")
-    if mode == p: pack_levels()
+        mode = input("(p)ack assets\n(u)npack assets\n")
+    if mode == "p": pack_levels()
     else: unpack_levels()
 
 main()

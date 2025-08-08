@@ -61,7 +61,7 @@ player_has_lives:
     sty $7E
     sta $7F
     jsr update_sprite_pos
-    lda #$9
+    lda #$8
     jsr set_clock
     pla
     jsr turn_on_sprite
@@ -87,6 +87,6 @@ not_level_file:
     jsr turn_on_sprite
     lda #$0
     sta $36
-    lda #$9
+    lda #$8
     jsr set_clock
     jmp frame_loop_start

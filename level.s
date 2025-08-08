@@ -92,7 +92,7 @@ not_stage_one:
     jsr full_level_load
     lda $8801
     jsr turn_on_sprite
-    lda #$9
+    lda #$8
     jsr set_clock
     lda #$5
     sta $37
