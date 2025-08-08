@@ -43,6 +43,7 @@ start:
     lda #$9
     sta $3
     lda #$1
+    sta $34
     jsr set_text_color
     lda #$0
     sta $35
