@@ -6,6 +6,7 @@ def build_stage(low, length, id):
             file.close()
     with open("STG" + f"{id:X}" + ".BIN", "wb") as file:
         file.write(stage)
+        file.write(b'\xFF\xFF')
         file.close()
 
 build_stage(0, 4, 0)

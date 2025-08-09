@@ -78,6 +78,11 @@ level_complete_reset:
     jmp title_out
 not_level_file:
     jsr full_level_load
+    bcc level_load_successful
+    inc $34
+    lda $34
+    jmp stage_starter
+level_load_successful:
     lda #$88
     ldy #$0
     sty $7E

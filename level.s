@@ -2,6 +2,17 @@
 full_level_load:
     jsr set_level_base
     jsr GRAPH_clear
+    ldy #$0
+    lda ($7E),y
+    cmp #$FF
+    bne valid_level_file
+    iny
+    lda ($7E),y
+    cmp #$FF
+    bne valid_level_file
+    sec
+    rts
+valid_level_file:
     jsr draw_playfield
     jsr load_enemies
     jsr return_to_level_base
@@ -42,6 +53,7 @@ pull_extras:
     sty $4
     sta $5
     jsr level_exit_init
+    clc
     rts
 set_level_base:
     tax

@@ -1,7 +1,7 @@
 import pygame
 from sprite import Text, Sprite
 
-color_list = [((0, 0, 0), 0), ((255, 255, 255), 1)]
+color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102) ,136)]
 
 #entity definitions in ref.txt [type, param1, param2]
 
@@ -27,8 +27,8 @@ class Editor:
         self.rectangles = []
         self.enemies = []
         self.cur_color = 0
-        self.cur_border = 0
-        self.snap_to = 1
+        self.cur_border = 5
+        self.snap_to = 16
         self.file_id = num
         self.cur_enemy = 0
         self.screen = scr
