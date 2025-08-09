@@ -114,7 +114,7 @@ load_stage:
     and #$F
     ora #$30
     cmp #$3A
-    bcs valid_stage_nibble
+    bcc valid_stage_nibble
     adc #$6
 valid_stage_nibble:
     sta $93A
@@ -130,6 +130,8 @@ valid_stage_nibble:
     sta $0
     lda #$0
     sta $7E
+    tax
+    ldy #$A0
     jsr LOAD
     lda #$A0
     sta $7F

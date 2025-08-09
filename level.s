@@ -81,13 +81,9 @@ stage_starter:
     lda #$2
     jsr intermission
     pla
-    cmp #$1
-    bne not_stage_one
-    ldx #$0
-    ldy #$4
-not_stage_one:
-    lda #$0
-    jsr load_level_range
+    sec
+    sbc #$1
+    jsr load_stage
     lda #$0
     jsr full_level_load
     lda $8801

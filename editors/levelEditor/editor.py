@@ -148,7 +148,7 @@ class Editor:
         #print(header + playfield + solid_colliders + enemies + extras)
         full_file = bytes(header + playfield + solid_colliders + enemies + extras)
         if len(full_file) > 512: return -1
-        with open("LVL{}.BIN".format(hex(self.file_id)[2:].zfill(2)).upper(), "wb") as file:
+        with open("Levels/LVL{}.BIN".format(hex(self.file_id)[2:].zfill(2)).upper(), "wb") as file:
             file.write(full_file)
             file.close()
         print("File saved!")
