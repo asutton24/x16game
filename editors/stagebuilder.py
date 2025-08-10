@@ -9,7 +9,7 @@ def build_stage(low, length, id):
         file.write(b'\xFF\xFF')
         file.close()
 
-build_stage(0, 6, 0)
+build_stage(0, 10, 0)
 # low = int(input("enter begining of stage"))
 # length = int(input("enter length of stage"))
 # id = int(input("enter stage id")) % 16
