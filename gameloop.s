@@ -11,6 +11,7 @@ wait_for_frame_bottom:
     beq wait_for_frame_bottom
 frame_loop:
     ;store current jiffy
+    jsr note_handler
     inc $3E
     jsr RDTIM
     sta $3A

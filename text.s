@@ -137,6 +137,8 @@ intermission:
     pha
     ldx #$0
     jsr reg_push
+    lda #$0
+    jsr note_handler
     jsr GRAPH_clear
     lda #$E
     jsr clear_text_line

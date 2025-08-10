@@ -47,9 +47,11 @@ start:
     jsr set_text_color
     lda #$0
     sta $35
+    sta $33
     tax
     jsr load_sprite_sheet
     jsr ram_init
+    jsr sound_init
     lda #$1
     ldx #$0
     jsr entity_init

@@ -28,3 +28,9 @@ joystick_get:
 entropy_get:
 *= $FECC
 monitor:
+*= $C012
+bas_psgnote:
+*= $C015
+bas_psgwav:
+*= $C048
+psg_init:

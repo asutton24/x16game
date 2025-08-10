@@ -191,6 +191,8 @@ skip_dpad_checks:
     lda #$FF
     sty $4
     sta $5
+    lda #$41
+    sta $33
 skip_jump_check:
     jsr set_entity_vel
     jsr return_to_entity_base
@@ -223,6 +225,8 @@ finished_proj_dir:
     sta $8
     sta $9
     jsr create_projectile
+    lda #$68
+    sta $33
 skip_shooting_check:
     jsr out_of_bounds
     bcc player_in_bounds
