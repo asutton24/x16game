@@ -50,3 +50,5 @@ dcb $00 $00 $00 $00 $0D
 dcb $02 $00 $02 $02 $0E
 ;drone animation $E32
 dcb $01 $00 $02 $01 $10
+;turret sprite $E37
+dcb $00 $00 $00 $00 $12

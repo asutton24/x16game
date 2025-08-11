@@ -200,7 +200,13 @@ not_chaser_init:
     cmp #$7
     bne not_drone_init
     jsr drone_init
+    jmp done_init
 not_drone_init:
+    cmp #$8
+    bne not_turret_init
+    jsr turret_init
+    jmp done_init
+not_turret_init:
 done_init:
     jsr swap_ptrs
     pla

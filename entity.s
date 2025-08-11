@@ -631,6 +631,10 @@ not_chaser:
     bne not_drone
     jmp drone_update
 not_drone:
+    cmp #$8
+    bne not_turret
+    jmp turret_update
+not_turret:
     rts
 
 

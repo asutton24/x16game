@@ -263,7 +263,7 @@ drone_init:
     lda #$FF
     sta ($7E),y
     ldy #$D
-    lda #$9
+    lda #$2
     sta ($7E),y
     lda $6
     ldy #$13
@@ -328,5 +328,72 @@ drone_same_dir:
     jmp destroy_entity
 drone_not_touching_player:
     rts
-
-
+turret_init:
+; param 1, 0 for left, 1 for right. Frames between shots in param 2
+    lda #$8
+    jsr enemy_init_starter
+    jsr return_to_entity_base
+    lda $6
+    ldy #$2
+    sta ($7E),y
+    dey
+    cmp #$0
+    beq left_facing_turret
+    lda ($7E),y
+    jsr face_right
+    jmp done_turret_facing
+left_facing_turret:
+    lda ($7E),y
+    jsr face_left
+done_turret_facing:
+    lda $8
+    ldy #$1E
+    sta ($7E),y
+    dey
+    sta ($7E),y
+    ldx #$E
+    ldy #$37
+    jsr load_anim
+    ldy #$26
+    lda #$B9
+    jsr set_hitbox
+    jsr get_entity_sprite_index
+    jsr turn_on_sprite
+    rts
+turret_update:
+    jsr check_enemy_death
+    bcc turret_still_alive
+    rts
+turret_still_alive:
+    jsr return_to_entity_base
+    ldy #$1D
+    lda ($7E),y
+    sec
+    sbc #$1
+    bne not_turret_shooting_frame
+    jsr get_entity_pos
+    lda #$0
+    sta $8
+    sta $9
+    jsr return_to_entity_base
+    ldy #$2
+    lda ($7E),y
+    bne set_shooting_right
+    lda #$FF
+    ldy #$F6
+    bmi turret_shooting_set
+set_shooting_right:
+    lda #$0
+    ldy #$A
+turret_shooting_set:
+    sta $7
+    sty $6
+    lda #$1
+    jsr create_projectile
+    jsr return_to_entity_base
+    ldy #$1E
+    lda ($7E),y
+    dey
+not_turret_shooting_frame:
+    sta ($7E),y
+    rts
