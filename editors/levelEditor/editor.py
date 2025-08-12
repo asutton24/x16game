@@ -5,9 +5,9 @@ color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102) ,136)]
 
 #entity definitions in ref.txt [type, param1, param2]
 
-entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0]]
+entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0], [8, 0, 0]]
 
-index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16}
+index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16, 8:18}
 
 def is_rectangle_redundant(index, rects):
     point_in_rectangle = lambda rt, x, y : (rt[2][0] <= x <= rt[2][0] + rt[2][2]) and (rt[2][1] <= y <= rt[2][1] + rt[2][3])
@@ -65,23 +65,11 @@ class Editor:
                     self.enemies[i][1] = x
                     self.enemies[i][2] = y
                     return
-        if entity_ref[self.cur_enemy][0] == 7:
-            newX = -1
-            newY = -1
-            while newX != x and newY != y:
-                newX, newY = query("position", None, self)
-                newX = newX // self.snap_to * self.snap_to
-                newY = newY // self.snap_to * self.snap_to
-            direction = 0
-            lifetime = 0
-            if x == newX:
-                direction += 256
-                lifetime = round(abs(newY - y) / 1.75)
-                if newY - y < 0: direction += 1
-            else:
-                lifetime = round(abs(newX - x) / 1.75)
-                if newX - x < 0: direction += 1
-            self.enemies.append([7, x, y, lifetime, direction])
+        if entity_type == 7:
+            add_drone(self, x, y)
+            return
+        elif entity_type == 8:
+            add_turret(self, x, y)
             return
         self.enemies.append([entity_ref[self.cur_enemy][0], x, y, entity_ref[self.cur_enemy][1], entity_ref[self.cur_enemy][2]])
     
@@ -187,19 +175,59 @@ def draw_from_editor(edit):
     t.update()
 
     
-def query(type, prompt, edit):
-    if type == None: return None
+def query(qtype, prompt, edit):
+    if qtype == None: return None
+    return_val = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return -1
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.pos[1] < 480 and type == "position":
+                if event.pos[1] < 480 and qtype == "position":
                     return [event.pos[0] // 2, event.pos[1] // 2]
+            if event.type == pygame.KEYDOWN:
+                if pygame.K_a <= event.key <= pygame.K_z and qtype == "letter":
+                    return chr(event.key)
+                elif pygame.K_0 <= event.key <= pygame.K_9 and qtype == "number":
+                    return_val = return_val * 10 + event.key - pygame.K_0
+                elif event.key == pygame.K_BACKSPACE and qtype == "number":
+                    return_val = return_val // 10
+                elif event.key == pygame.K_RETURN and qtype == "number":
+                    return return_val
         draw_from_editor(edit)
+        if prompt: Text(prompt, 300, 500, (255, 255, 255), 2, edit.screen).update()
+        if qtype == "number": Text(f"{return_val}", 300, 540, (255, 255, 255), 2, edit.screen).update()
         pygame.display.update()
 
+def add_drone(edit, x, y):
+    newX = -1
+    newY = -1
+    while newX != x and newY != y:
+        newX, newY = query("position", "Choose endpoint", edit)
+        newX = newX // edit.snap_to * edit.snap_to
+        newY = newY // edit.snap_to * edit.snap_to
+    direction = 0
+    lifetime = 0
+    if x == newX:
+        direction += 256
+        lifetime = round(abs(newY - y) / 1.75)
+        if newY - y < 0: direction += 1
+    else:
+        lifetime = round(abs(newX - x) / 1.75)
+        if newX - x < 0: direction += 1
+    edit.enemies.append([7, x, y, lifetime, direction])
+    return
 
+def add_turret(edit, x, y):
+    xVal = x
+    while xVal == x:
+        xVal = query("position", "Choose direction", edit)[0]
+    if xVal < x: direction = 0
+    else: direction = 1
+    time = 0
+    while 0 == time or time > 255:
+        time = query("number", "Frames between shots", edit)
+    edit.enemies.append([8, x, y, direction, time])
 
 def main():
     pygame.init()
