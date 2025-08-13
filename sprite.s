@@ -36,7 +36,7 @@ reserve_sprite:
     rts
 free_sprite:
     pha
-    jsr turn_off_sprite
+    jsr initialize_sprite
     pla
     jsr convert_acm_to_spr_record
     eor #$FF

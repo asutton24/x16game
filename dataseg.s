@@ -52,3 +52,5 @@ dcb $02 $00 $02 $02 $0E
 dcb $01 $00 $02 $01 $10
 ;turret sprite $E37
 dcb $00 $00 $00 $00 $12
+;jumper animation $E3C
+dcb $01 $00 $02 $01 $13

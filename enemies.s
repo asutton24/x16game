@@ -263,7 +263,7 @@ drone_init:
     lda #$FF
     sta ($7E),y
     ldy #$D
-    lda #$2
+    lda #$4
     sta ($7E),y
     lda $6
     ldy #$13
@@ -396,4 +396,54 @@ turret_shooting_set:
     dey
 not_turret_shooting_frame:
     sta ($7E),y
+    rts
+jumper_init:
+    lda #$9
+    jsr enemy_init_starter
+    ldx #$E
+    ldy #$3C
+    jsr load_anim
+    ldy #$52
+    lda #$5D
+    jsr set_hitbox
+    jsr get_entity_sprite_index
+    jsr turn_on_sprite
+    rts
+jumper_update:
+    jsr check_enemy_death
+    bcc jumper_still_alive
+    rts
+jumper_still_alive:
+    jsr apply_gravity
+    jsr check_collision_with_player
+    bcc jumper_not_touching_player
+    jsr damage_player
+jumper_fell:
+    jmp destroy_entity
+jumper_not_touching_player:
+    jsr out_of_bounds
+    bcs jumper_fell
+    jsr return_to_entity_base
+    ldy #$1F
+    lda ($7E),y
+    and #$4
+    bne jumper_on_ground
+    rts
+jumper_on_ground:
+    jsr what_side_of_player_am_i_on
+    bcc set_jumper_positive_vel
+    ldy #$F8
+    lda #$FF
+    bmi jumper_xvel_set
+set_jumper_positive_vel:
+    ldy #$9
+    lda #$0
+jumper_xvel_set:
+    sty $2
+    sta $3
+    lda #$FF
+    ldy #$F4
+    sty $4
+    sta $5
+    jsr set_entity_vel
     rts

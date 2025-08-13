@@ -464,21 +464,6 @@ reset_collision_byte:
     and #$FC
     sta ($7E),y
     rts
-; set carry if entity is touching the ground
-is_on_ground:
-    jsr return_to_entity_base
-    ldy #$1F
-    lda ($7E),y
-    and #$2
-    beq not_on_ground
-    jsr get_entity_vel
-    lda $5
-    bmi not_on_ground
-    sec
-    rts
-not_on_ground:
-    clc
-    rts
 correct_velocity_vector:
     jsr return_to_entity_base
     ldy #$1F
@@ -635,6 +620,10 @@ not_drone:
     bne not_turret
     jmp turret_update
 not_turret:
+    cmp #$9
+    bne not_jumper
+    jmp jumper_update
+not_jumper:
     rts
 
 
