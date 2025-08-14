@@ -5,9 +5,9 @@ color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102) ,136)]
 
 #entity definitions in ref.txt [type, param1, param2]
 
-entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0], [8, 0, 0]]
+entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0], [8, 0, 0], [9, 0, 0]]
 
-index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16, 8:18}
+index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16, 8:18, 9:19}
 
 def is_rectangle_redundant(index, rects):
     point_in_rectangle = lambda rt, x, y : (rt[2][0] <= x <= rt[2][0] + rt[2][2]) and (rt[2][1] <= y <= rt[2][1] + rt[2][3])

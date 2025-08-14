@@ -207,6 +207,11 @@ not_drone_init:
     jsr turret_init
     jmp done_init
 not_turret_init:
+    cmp #$9
+    bne not_jumper_init
+    jsr jumper_init
+    jmp done_init
+not_jumper_init:
 done_init:
     jsr swap_ptrs
     pla
