@@ -1,7 +1,7 @@
 import pygame
 from sprite import Text, Sprite
 
-color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102) ,136)]
+color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102), 136), ((0, 255, 255), 170)]
 
 #entity definitions in ref.txt [type, param1, param2]
 

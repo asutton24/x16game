@@ -351,6 +351,9 @@ done_turret_facing:
     sta ($7E),y
     dey
     sta ($7E),y
+    ldy #$D
+    lda #$1
+    sta ($7E),y
     ldx #$E
     ldy #$37
     jsr load_anim

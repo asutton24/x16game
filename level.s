@@ -2,11 +2,11 @@
 full_level_load:
     jsr set_level_base
     jsr GRAPH_clear
-    ldy #$0
+    ldy #$1
     lda ($7E),y
     cmp #$FF
     bne valid_level_file
-    iny
+    dey
     lda ($7E),y
     cmp #$FF
     bne valid_level_file
@@ -70,6 +70,8 @@ set_level_base:
     clc
     adc #$1
     sta $0
+    lda #$0
+    sta $7E
     rts
 return_to_level_base:
     lda #$0
@@ -108,6 +110,7 @@ stage_starter:
     sta $36
     lda #$0
     sta $880D
+    sta $35
     jsr draw_hud
     jmp frame_loop_start
 draw_playfield:
