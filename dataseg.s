@@ -55,3 +55,5 @@ dcb $01 $00 $02 $01 $10
 dcb $00 $00 $00 $00 $12
 ;jumper animation $E3C
 dcb $01 $00 $02 $01 $13
+;target sprite $E41
+dcb $00 $00 $00 $00 $15

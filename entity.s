@@ -624,6 +624,10 @@ not_turret:
     bne not_jumper
     jmp jumper_update
 not_jumper:
+    cmp #$A
+    bne not_target
+    jmp target_update
+not_target:
     rts
 
 

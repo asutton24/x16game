@@ -215,6 +215,11 @@ not_turret_init:
     jsr jumper_init
     jmp done_init
 not_jumper_init:
+    cmp #$A
+    bne not_target_init
+    jsr target_init
+    jmp done_init
+not_target_init:
 done_init:
     jsr swap_ptrs
     pla

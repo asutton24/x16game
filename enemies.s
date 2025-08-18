@@ -450,3 +450,37 @@ jumper_xvel_set:
     sta $5
     jsr set_entity_vel
     rts
+target_init:
+    lda #$A
+    jsr enemy_init_starter
+    ldx #$E
+    ldy #$41
+    jsr load_anim
+    ldy #$11
+    lda #$EE
+    jsr set_hitbox
+    jsr get_entity_sprite_index
+    jsr turn_on_sprite
+target_not_hit:
+    rts
+target_update:
+    jsr check_enemy_death
+    bcc target_not_hit
+    jsr push_current_ptr
+    lda #$20
+    sta $7E
+    lda #$88
+    sta $7F
+keep_spike_search:
+    ldy #$0
+    lda ($7E),y
+    cmp #$5
+    bne target_not_spike
+    jsr destroy_entity
+target_not_spike:
+    jsr goto_next_entity
+    lda $7F
+    cmp #$8C
+    bne keep_spike_search
+    jsr set_ptr_from_stk
+    rts
