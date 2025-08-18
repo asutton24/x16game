@@ -1,7 +1,7 @@
 title_level:
     lda #$FF
     sta $37
-    lda #$D2
+    lda #$C2
     sta $2
     lda #$D
     sta $3
@@ -11,6 +11,7 @@ title_level:
     sta $5
     lda #$0
     jsr set_level_base
+    ldy #$3E
     jsr mem_cpy
     lda #$0
     jsr full_level_load
