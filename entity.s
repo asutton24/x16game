@@ -628,6 +628,10 @@ not_jumper:
     bne not_target
     jmp target_update
 not_target:
+    cmp #$B
+    bne not_ghost
+    jmp ghost_update
+not_ghost:
     rts
 
 

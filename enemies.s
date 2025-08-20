@@ -484,3 +484,68 @@ target_not_spike:
     bne keep_spike_search
     jsr set_ptr_from_stk
     rts
+ghost_init:
+    lda #$B
+    jsr enemy_init_starter
+    ldx #$E
+    ldy #$46
+    jsr load_anim
+    ldy #$52
+    lda #$6B
+    jsr set_hitbox
+    jsr get_entity_sprite_index
+    pha
+    iny
+    lda #$FF
+    sta ($7E),y
+    pla
+    jsr turn_on_sprite
+    rts
+ghost_update:
+    jsr check_enemy_death
+    bcc ghost_still_alive
+dont_realign_ghost:
+    rts
+ghost_still_alive:
+    jsr check_collision_with_player
+    bcc ghost_not_touching_player
+    jsr damage_player
+    jmp destroy_entity
+ghost_not_touching_player:
+    lda $3E
+    and #$F
+    bne dont_realign_ghost
+    jsr what_side_of_player_am_i_on
+    bcc set_ghost_positive_x
+    lda #$FF
+    pha
+    lda #$FA
+    pha
+    jsr get_entity_sprite_index
+    jsr face_left
+    jmp ghost_x_set
+set_ghost_positive_x:
+    lda #$0
+    pha
+    lda #$5
+    pha
+    jsr get_entity_sprite_index
+    jsr face_right
+ghost_x_set:
+    jsr am_i_above_or_below_player
+    bcc set_ghost_positive_y
+    lda #$FF
+    ldy #$FA
+    bmi ghost_y_set
+set_ghost_positive_y:
+    lda #$0
+    ldy #$5
+ghost_y_set:
+    sty $4
+    sta $5
+    pla
+    sta $2
+    pla
+    sta $3
+    jmp set_entity_vel
+

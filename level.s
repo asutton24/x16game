@@ -220,6 +220,11 @@ not_jumper_init:
     jsr target_init
     jmp done_init
 not_target_init:
+    cmp #$B
+    bne not_ghost_init
+    jsr ghost_init
+    jmp done_init
+not_ghost_init:
 done_init:
     jsr swap_ptrs
     pla

@@ -1,13 +1,13 @@
 import pygame
 from sprite import Text, Sprite
 
-color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102), 136), ((0, 255, 255), 171)]
+color_list = [((0, 0, 0), 0), ((255, 255, 255), 1), ((51, 255, 102), 136), ((0, 255, 255), 171), ((187, 119, 255), 213)]
 
 #entity definitions in ref.txt [type, param1, param2]
 
-entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0], [8, 0, 0], [9, 0, 0], [10, 0, 0]]
+entity_ref = [[1, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0], [8, 0, 0], [9, 0, 0], [10, 0, 0], [11, 0, 0]]
 
-index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16, 8:18, 9:19, 10:21}
+index_to_frame = {1:1, 4:13, 5:12, 6:14, 7:16, 8:18, 9:19, 10:21, 11:22}
 
 def is_rectangle_redundant(index, rects):
     point_in_rectangle = lambda rt, x, y : (rt[2][0] <= x <= rt[2][0] + rt[2][2]) and (rt[2][1] <= y <= rt[2][1] + rt[2][3])

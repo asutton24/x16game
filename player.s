@@ -291,6 +291,14 @@ what_side_of_player_am_i_on:
     lda $8804
     sta $5
     jmp cmp_sixteen
+am_i_above_or_below_player:
+; carry means you are below player
+    jsr get_entity_pos
+    lda $8805
+    sta $4
+    lda $8806
+    sta $5
+    jmp cmp_sixteen
 return_to_player_start:
     jsr return_to_level_base
     ldy #$7

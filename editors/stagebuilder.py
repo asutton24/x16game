@@ -11,6 +11,7 @@ def build_stage(low, length, id):
 
 build_stage(0, 10, 0)
 build_stage(10, 9, 1)
+build_stage(19, 1, 0)
 # low = int(input("enter begining of stage"))
 # length = int(input("enter length of stage"))
 # id = int(input("enter stage id")) % 16

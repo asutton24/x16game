@@ -57,3 +57,5 @@ dcb $00 $00 $00 $00 $12
 dcb $01 $00 $02 $01 $13
 ;target sprite $E41
 dcb $00 $00 $00 $00 $15
+;ghost animation $E46
+dcb $04 $00 $02 $04 $16
