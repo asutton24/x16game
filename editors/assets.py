@@ -35,7 +35,7 @@ def unpack_levels():
 def main():
     mode = "x"
     while mode not in "pu":
-        mode = input("(p)ack assets\n(u)npack assets\n")
+        mode = input("(p)ack assets\n(u)npack assets\n").lower()
     if mode == "p": pack_levels()
     else: unpack_levels()
 

@@ -294,6 +294,10 @@ what_side_of_player_am_i_on:
 am_i_above_or_below_player:
 ; carry means you are below player
     jsr get_entity_pos
+    lda $4
+    sta $2
+    lda $5
+    sta $3
     lda $8805
     sta $4
     lda $8806
