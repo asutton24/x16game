@@ -8,6 +8,9 @@ animation timer (E), current frame offset (F), number of frames (10), animation 
 
 zpg map:
 $02-$21 r0-rf
+$2E-$2F score cache
+$30-$31 score
+$32 unused music register
 $33 note to play
 $34 continue point
 $35 current level

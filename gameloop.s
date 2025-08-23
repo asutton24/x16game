@@ -78,8 +78,12 @@ level_complete_reset:
     bne not_level_file
     jmp title_out
 not_level_file:
+    pha
+    jsr tally_level_score
+    pla
     jsr full_level_load
     bcc level_load_successful
+    jsr final_stage_score
     inc $34
     lda $34
     jmp stage_starter

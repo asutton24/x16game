@@ -47,6 +47,8 @@ no_continue:
     sta $35
     lda #$0
     sta $36
+    sta $8809
+    sta $880A
     lda #$1
     sta $880D
     jsr clear_text_line
@@ -69,10 +71,12 @@ title_out:
     sta $5
     jsr cmp_sixteen
     bcc continue_stage
+    jsr reset_score
     lda #$1
     sta $34
     jmp stage_starter
 continue_stage:
+    jsr deduct_and_restore_score
     lda $34
     jmp stage_starter
 game_over:
