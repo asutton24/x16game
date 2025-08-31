@@ -1,1 +1,1 @@
-x16system.s dataseg.s utils.s setup.s filehandling.s level.s sprite.s entity.s player.s gameloop.s animation.s enemies.s clock.s text.s menu.s sound.s score.s logging.s
+x16system.s dataseg.s utils.s setup.s filehandling.s level.s sprite.s entity.s player.s gameloop.s animation.s enemies.s clock.s text.s menu.s sound.s score.s
