@@ -89,7 +89,39 @@ game_over:
     sta $3
     lda #$2
     jsr intermission
-    jmp title_level 
+    jmp title_level
+game_win:
+    lda #$80
+    sed
+    clc
+    adc $30
+    sta $30
+    lda #$0
+    adc $31
+    sta $31
+    cld
+    lda #$52
+    sta $2
+    lda #$9
+    sta $3
+    lda #$2
+    jsr intermission
+    jsr score_out
+    lda #$5B
+    sta $2
+    lda #$9
+    sta $3
+    lda #$5
+    jsr intermission
+    lda #$6D
+    sta $2
+    lda #$9
+    sta $3
+    lda #$3
+    jsr intermission
+    lda #$1
+    sta $34
+    jmp title_level
 logo_init:
     lda #$77
     sta $10
@@ -104,7 +136,7 @@ logo_init_loop:
     lda $949,x
     ldx $10
     jsr assign_data_to_sprite
-    lda #$20
+    lda #$30
     sta $4
     lda #$0
     sta $5

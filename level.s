@@ -225,12 +225,24 @@ not_target_init:
     jsr ghost_init
     jmp done_init
 not_ghost_init:
+    cmp #$C
+    bne not_gspawner_init
+    jsr gspawner_init
+    jmp done_init
+not_gspawner_init:
+    cmp #$D
+    bne not_sentinel_init
+    jsr sentinel_init
+    jmp done_init
+not_sentinel_init:
 done_init:
     jsr swap_ptrs
     pla
     sec
     sbc #$1
     pha
-    bne enemy_loader
+    beq skip_enemy_loader
+    jmp enemy_loader
+skip_enemy_loader:
     pla
     rts

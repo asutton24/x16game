@@ -86,6 +86,10 @@ not_level_file:
     jsr final_stage_score
     inc $34
     lda $34
+    cmp #$5
+    bne not_game_end
+    jmp game_win
+not_game_end:
     jmp stage_starter
 level_load_successful:
     lda #$88

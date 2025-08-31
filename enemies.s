@@ -554,13 +554,27 @@ gspawner_init:
 not_spawnframe:
     rts
 gspawner_update:
-    lda #$3E
-    and #$F
+    lda $3E
+    and #$1F
     bne not_spawnframe
     jsr randbyte
     and #$1C
     bne not_spawnframe
     jsr push_current_ptr
+    jsr return_to_entity_base
+    ldy #$3
+    lda ($7E),y
+    sta $2
+    iny
+    lda ($7E),y
+    sta $3
+    iny
+    lda ($7E),y
+    sta $4
+    iny
+    lda ($7E),y
+    sta $5
+    iny
     jsr ghost_init
     jmp set_ptr_from_stk
 sentinel_init:
@@ -578,6 +592,8 @@ sentinel_init:
     sta ($7E),y
     ldy #$2
     sta ($7E),y
+    jsr get_entity_sprite_index
+    jmp turn_on_sprite
 sentinel_ok:
     rts
 sentinel_update:
@@ -607,20 +623,21 @@ search_for_boss_exit:
     cmp $8C
     bne search_for_boss_exit
 found_boss_exit:
-    lda #$0
+    lda #$C0
     sta $2
-    lda #$0
-    sta $3
-    lda #$0
     sta $4
-    lda #$0
+    lda #$2
+    sta $3
     sta $5
     jsr set_entity_pos
+    jsr get_entity_sprite_index
+    jsr update_sprite_pos
+    lda #$4
+    sta $34
     jmp set_ptr_from_stk
 sentinel_alive:
     jsr randbyte
-    and #$E0
-    lsr
+    and #$70
     lsr
     lsr
     tax
@@ -632,5 +649,5 @@ sentinel_alive:
     sta $4
     lda $DA3,x
     sta $5
-    jmp set_entity_pos
-    
+    jsr set_entity_pos
+    jmp update_sprite_pos

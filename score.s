@@ -64,4 +64,28 @@ final_stage_score:
     sta $31
     cld
     jmp cache_score
+score_out:
+    lda $31
+    lsr
+    lsr
+    lsr
+    lsr
+    ora #$30
+    sta $968
+    lda $31
+    and #$F
+    ora #$30
+    sta $969
+    lda $30
+    lsr
+    lsr
+    lsr
+    lsr
+    ora #$30
+    sta $96A
+    lda $30
+    and #$F
+    ora #$30
+    sta $96B
+    rts
     

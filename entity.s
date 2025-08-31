@@ -632,13 +632,12 @@ not_target:
     bne not_ghost
     jmp ghost_update
 not_ghost:
+    cmp #$C
+    bne not_gspawner
+    jmp gspawner_update
+not_gspawner:
+    cmp #$D
+    bne not_sentinel
+    jmp sentinel_update
+not_sentinel:
     rts
-
-
-
-
-
-
-    
-
-
