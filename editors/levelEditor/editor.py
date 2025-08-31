@@ -237,6 +237,7 @@ def main():
     running = True
     active_points = []
     appending_to_level = False
+    edit_mode_restore = "playfield"
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -254,6 +255,9 @@ def main():
                 elif event.pos[1] < 480 and edit.edit_mode == "enemies":
                     if event.button == 1: edit.add_enemy(event.pos[0] // 2, event.pos[1] // 2)
                     elif event.button == 3: edit.remove_enemy(event.pos[0] // 2, event.pos[1] // 2)
+                elif event.pos[1] < 480 and edit.edit_mode == "pos_reference":
+                    if event.button == 1:
+                        print(f"{event.pos[0] // 2 // edit.snap_to * edit.snap_to:X} {event.pos[1] // 2 // edit.snap_to * edit.snap_to:X}")
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
                     edit.save_to_file()
@@ -276,7 +280,7 @@ def main():
                     edit.snap_to *= 2
                 elif event.key == pygame.K_MINUS and edit.snap_to > 1:
                     edit.snap_to //= 2
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE and edit.edit_mode != "pos_reference":
                     if edit.edit_mode == "playfield": edit.edit_mode = "enemies"
                     else: edit.edit_mode = "playfield"
                 elif pygame.K_0 <= event.key <= pygame.K_9:
@@ -290,6 +294,12 @@ def main():
                             if new_file > 26: appending_to_level = False
                 elif event.key == pygame.K_RETURN:
                     appending_to_level = False
+                elif event.key == pygame.K_p:
+                    if edit.edit_mode != "pos_reference":
+                        edit_mode_restore = edit.edit_mode
+                        edit.edit_mode = "pos_reference"
+                    else:
+                        edit.edit_mode = edit_mode_restore
         draw_from_editor(edit)
         pygame.display.update()
     pygame.quit()

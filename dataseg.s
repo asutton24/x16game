@@ -21,6 +21,8 @@ dcb $43 $4F $4E $54 $49 $4E $55 $45 $0
 dcb $53 $54 $47 $30 $2E $42 $49 $4E
 ;GAME OVER, $93F, len = 10
 dcb $47 $41 $4D $45 $20 $4F $56 $45 $52 $0
+;OCTATHLON, $949, len = 9, sprite data
+dcb $1B $1C $1D $1E $1D $1F $20 $1B $21
 *= $DA0
 ;sentinel location table
 *= $DC2
@@ -61,3 +63,5 @@ dcb $01 $00 $02 $01 $13
 dcb $00 $00 $00 $00 $15
 ;ghost animation $E46
 dcb $04 $00 $02 $04 $16
+;sentinel animation $E4B
+dcb $03 $00 $01 $03 $18

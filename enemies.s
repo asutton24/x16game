@@ -566,6 +566,12 @@ gspawner_update:
 sentinel_init:
     lda #$D
     jsr enemy_init_starter
+    ldx #$E
+    ldy #$4B
+    jsr load_anim
+    ldy #$11
+    lda #$EE
+    jsr set_hitbox
     jsr return_to_entity_base
     ldy #$D
     lda #$7
@@ -627,3 +633,4 @@ sentinel_alive:
     lda $DA3,x
     sta $5
     jmp set_entity_pos
+    
