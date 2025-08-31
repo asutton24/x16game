@@ -37,6 +37,7 @@ update_entity_loop:
     jsr update_hud_time
     jsr randbyte
 wait_for_frame_close:
+    inc $3C
     jsr RDTIM
     and #$FE
     cmp $3A
