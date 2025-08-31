@@ -548,4 +548,82 @@ ghost_y_set:
     pla
     sta $3
     jmp set_entity_vel
-
+gspawner_init:
+    lda #$C
+    jsr enemy_init_starter
+not_spawnframe:
+    rts
+gspawner_update:
+    lda #$3E
+    and #$F
+    bne not_spawnframe
+    jsr randbyte
+    and #$1C
+    bne not_spawnframe
+    jsr push_current_ptr
+    jsr ghost_init
+    jmp set_ptr_from_stk
+sentinel_init:
+    lda #$D
+    jsr enemy_init_starter
+    jsr return_to_entity_base
+    ldy #$D
+    lda #$7
+    sta ($7E),y
+    ldy #$2
+    sta ($7E),y
+sentinel_ok:
+    rts
+sentinel_update:
+    jsr return_to_entity_base
+    ldy #$D
+    lda ($7E),y
+    ldy #$2
+    cmp ($7E),y
+    beq sentinel_ok
+    sta ($7E),y
+    lda #$8
+    jsr set_clock
+    jsr check_enemy_death
+    bcc sentinel_alive
+    jsr push_current_ptr
+    lda #$20
+    sta $7E
+    lda #$88
+    sta $7F
+    ldy #$0
+search_for_boss_exit:
+    lda ($7E),y
+    cmp #$4
+    beq found_boss_exit
+    jsr goto_next_entity
+    lda $7F
+    cmp $8C
+    bne search_for_boss_exit
+found_boss_exit:
+    lda #$0
+    sta $2
+    lda #$0
+    sta $3
+    lda #$0
+    sta $4
+    lda #$0
+    sta $5
+    jsr set_entity_pos
+    jmp set_ptr_from_stk
+sentinel_alive:
+    jsr randbyte
+    and #$E0
+    lsr
+    lsr
+    lsr
+    tax
+    lda $DA0,x
+    sta $2
+    lda $DA1,x
+    sta $3
+    lda $DA2,x
+    sta $4
+    lda $DA3,x
+    sta $5
+    jmp set_entity_pos

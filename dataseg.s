@@ -21,6 +21,8 @@ dcb $43 $4F $4E $54 $49 $4E $55 $45 $0
 dcb $53 $54 $47 $30 $2E $42 $49 $4E
 ;GAME OVER, $93F, len = 10
 dcb $47 $41 $4D $45 $20 $4F $56 $45 $52 $0
+*= $DA0
+;sentinel location table
 *= $DC2
 ;title level info
 dcb $8 $0 $1C $0 $35 $0 $36 $0 $2 $0 $1 $0 $0 $90 $0 $40

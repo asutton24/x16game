@@ -12,7 +12,7 @@ def build_stage(low, length, id):
 build_stage(0, 10, 0)
 build_stage(10, 9, 1)
 build_stage(19, 9, 2)
-build_stage(28, 6, 3)
+build_stage(28, 11, 3)
 # low = int(input("enter begining of stage"))
 # length = int(input("enter length of stage"))
 # id = int(input("enter stage id")) % 16
