@@ -12,7 +12,7 @@ If the assembler executable is in the working directory, simply run `./assemble 
 
 To run the game, copy SPR0.BIN, all STGX.BIN files, and a.bin to the Commander X16 emulator directory (Or to a directory on the SD card, if on real hardware)
 
-Navigate to the directory on the X16, enter `LOAD A.BIN` and `RUN` to begin
+Navigate to the directory on the X16, enter `LOAD "A.BIN"` and `RUN` to begin
 
 ## Instructions
 
